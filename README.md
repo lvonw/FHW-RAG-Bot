@@ -16,3 +16,4 @@ project:
     - PVO_2023_V5.pdf
     - ZLO_2021_V2.pdf
 
+- A valid OpenAI API key in a .env file with the keyword 'OPENAI_API_KEY'
