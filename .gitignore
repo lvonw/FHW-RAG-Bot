@@ -1,4 +1,6 @@
 .env
-/data/*/*
+/data/pdfs/*
+data/vectordb/*/*
+
 /assignment/
 /__pycache__/
