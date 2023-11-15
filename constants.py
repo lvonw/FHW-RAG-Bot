@@ -29,3 +29,10 @@ Frage: {question}"""
 PROMPT = PromptTemplate(
     input_variables = ["context", "question"],
     template        = TEMPLATE)
+
+class TokenizeMethod(Enum):
+    PDF_LOADER = "PDF Loader"
+    CHAR_SPLITTER = "Character Splitter"
+
+INIT_CHROMA = False
+DEFAULT_DATABASE = TokenizeMethod.PDF_LOADER
