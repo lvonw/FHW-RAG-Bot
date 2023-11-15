@@ -6,7 +6,8 @@ from langchain.prompts              import PromptTemplate
 
 load_dotenv(find_dotenv())
 
-PATH_VECTORDB   = "./data/vectordb/"
+PATH_VECTORDB_SPLITTER      = "./data/vectordb/splitter/"
+PATH_VECTORDB_PDFLOADER     = "./data/vectordb/pdfloader/"
 PATH_PDF        = "data/pdfs/"
 
 INPUT_PROMPT    = "Wie kann ich Dir helfen?: "
