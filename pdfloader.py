@@ -9,12 +9,12 @@ from langchain.schema import BaseDocumentTransformer
 
 def keep_bold_chars(obj):
     if obj['object_type'] == 'char':
-        return 'Bold' in obj['fontname']
+        return 'Bold' in obj['fontname'] and obj["size"] >= 12
     return True
 
 def keep_normal_chars(obj):
     if obj['object_type'] == 'char':
-        return not 'Bold' in obj['fontname']
+        return not ('Bold' in obj['fontname'] and obj["size"] >= 12)
     return True
 
 class PdfBaseElement(ABC):
@@ -103,7 +103,7 @@ def parsePdf(path) -> List[PdfBaseElement]:
                            
                 
                 def textBetween(obj):
-                    return (obj["top"] > TextElements[i]['bbox'][3] if i >= 0 else True) and (obj["bottom"] < TextElements[i+1]['bbox'][1] if i+1 < len(TextElements) else True)
+                    return (obj["top"] >= TextElements[i]['bbox'][1] if i >= 0 else True) and (obj["bottom"] <= TextElements[i+1]['bbox'][3] if i+1 < len(TextElements) else True)
                 page_textbetween = page_normal_text.filter(textBetween)
                 
                 text = page_textbetween.extract_text()
