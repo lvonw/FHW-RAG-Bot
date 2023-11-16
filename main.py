@@ -3,7 +3,6 @@ import argparse
 import constants
 
 from pdfloader                      import PDFCustomLoader
-from enum                           import Enum
 
 from langchain.schema               import StrOutputParser
 from langchain.schema.runnable      import RunnablePassthrough
@@ -13,6 +12,12 @@ from langchain.text_splitter        import CharacterTextSplitter
 from langchain.vectorstores         import Chroma
 
 
+def get_user_input():
+    return input(constants.INPUT_PROMPT)
+
+def format_docs(docs):
+    return "\n\n".join([d.page_content for d in docs])
+
 def ask_question(question, retriever):
     question_chain = (
         {"context": retriever | format_docs, "question": RunnablePassthrough()} 
@@ -20,24 +25,6 @@ def ask_question(question, retriever):
         | constants.LLM 
         | StrOutputParser())
     return question_chain.invoke(question)
-
-def load_chroma(path):
-    return Chroma(
-        embedding_function = OpenAIEmbeddings(openai_api_key=constants.API_KEY),
-        persist_directory  = path) 
-        
-def get_user_input():
-    return input(constants.INPUT_PROMPT)
-
-def format_docs(docs):
-    return "\n\n".join([d.page_content for d in docs])
-
-def get_path(mode):
-    match mode:
-        case constants.TokenizeMethod.CHAR_SPLITTER: 
-            return constants.PATH_VECTORDB_SPLITTER        
-        case constants.TokenizeMethod.PDF_LOADER: 
-            return constants.PATH_VECTORDB_PDFLOADER
         
 def get_retriever(mode=constants.DEFAULT_DATABASE, init=False):
     db = None
@@ -68,6 +55,18 @@ def init_and_persist_chroma(docs, path):
         persist_directory = path)
     return db
 
+def load_chroma(path):
+    return Chroma(
+        embedding_function = OpenAIEmbeddings(openai_api_key=constants.API_KEY),
+        persist_directory  = path) 
+        
+def get_path(mode):
+    match mode:
+        case constants.TokenizeMethod.CHAR_SPLITTER: 
+            return constants.PATH_VECTORDB_SPLITTER        
+        case constants.TokenizeMethod.PDF_LOADER: 
+            return constants.PATH_VECTORDB_PDFLOADER
+
 def get_db_choices():
     return[m.value for m in constants.TokenizeMethod]
 
@@ -78,43 +77,37 @@ def parse_db_choice(choice):
         raise argparse.ArgumentTypeError(f"Invalid database option")
     
 def prepare_arg_parser():
-    parser = argparse.ArgumentParser(prog="FHDocsBot",
-                                     description="Beantwortet Fragen zu FH Dokumenten",
-                                     usage="Hilfe",
-                                     epilog="Ende der Hilfe")
+    parser = argparse.ArgumentParser(prog=constants.USAGE_PROGRAM_NAME,
+                                     description=constants.USAGE_PROGRAM_DESC)
     parser.add_argument("-a",
                         "--ask",
                         dest="question", 
                         nargs=1,
-                        help="Temp",
+                        help=constants.USAGE_ASK,
                         type=str)
-    
     parser.add_argument("-db",
                         "--database",
                         dest="database",
                         choices=get_db_choices(),
                         default=constants.DEFAULT_DATABASE,
                         nargs=1,
-                        help="Temp",
-                        type=parse_db_choice)
-    
+                        help=constants.USAGE_DATABASE,
+                        type=parse_db_choice) 
     parser.add_argument("-i", 
                         "--init", 
                         dest="init",
                         action="store_true",
-                        help="Temp")
-    
+                        help=constants.USAGE_INIT)
     parser.add_argument("-cv",
                         "--closest-vectors",
                         dest="cv",
                         action="store_true",
-                        help="Temp")
-
+                        help=constants.USAGE_CLOSEST_V)
     parser.add_argument("-c",
                         "--cli",
                         dest="cli",
                         action="store_true",
-                        help="Temp")
+                        help=constants.USAGE_CLI)
     return parser
 
 def main():
