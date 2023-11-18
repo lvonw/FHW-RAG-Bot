@@ -39,9 +39,7 @@ INIT_CHROMA = False
 DEFAULT_DATABASE = TokenizeMethod.PDF_LOADER
 
 # ========== USAGE ==========
-USAGE_PROGRAM_NAME  = """
-FHDocsBot
-"""  
+USAGE_PROGRAM_NAME  = "FHDocsBot"
 USAGE_PROGRAM_DESC  = """
 Beantwortet Fragen zu offiziellen Dokumenten der FH-Wedel.
 """ 
