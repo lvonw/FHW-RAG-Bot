@@ -3,12 +3,15 @@ from dotenv                         import load_dotenv, find_dotenv
 from enum                           import Enum
 from langchain.chat_models          import ChatOpenAI
 from langchain.prompts              import PromptTemplate
+from langchain.text_splitter        import CharacterTextSplitter
+import enum
 
 load_dotenv(find_dotenv())
 
 # ========== PATHS ==========
-PATH_VECTORDB_SPLITTER      = "./data/vectordb/splitter/"
-PATH_VECTORDB_PDFLOADER     = "./data/vectordb/pdfloader/"
+PATH_VECTORDB               = "./data"
+PATH_VECTORDB_SPLITTER      = "./vectordb/splitter/"
+PATH_VECTORDB_PDFLOADER     = "./vectordb/pdfloader/"
 PATH_PDF        = "data/pdfs/"
 
 # ========== LLM ==========
@@ -20,7 +23,7 @@ Frage: {question}"""
 PROMPT = PromptTemplate(
     input_variables = ["context", "question"],
     template        = TEMPLATE)
-GPT_TURBO       = "gpt-3.5-turbo"
+GPT_TURBO       = "gpt-3.5-turbo-1106"
 TEMPERATURE     = 0.0
 API_KEY         = os.environ["OPENAI_API_KEY"]
 LLM             = ChatOpenAI(  
@@ -28,15 +31,24 @@ LLM             = ChatOpenAI(
     temperature     = TEMPERATURE, 
     openai_api_key  = API_KEY)
 
+SPLITTER    = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
+
 INPUT_PROMPT    = "Wie kann ich Dir helfen?: "
 
 # ========== DATABASE ==========
-class TokenizeMethod(Enum):
+class TokenizeMethod(enum.Enum):
     PDF_LOADER = "PDF Loader"
     CHAR_SPLITTER = "Character Splitter"
 
 INIT_CHROMA = False
 DEFAULT_DATABASE = TokenizeMethod.PDF_LOADER
+
+# ========== MODELS ==========
+class ModelMethod(enum.Enum):
+    VECSTORE = "VecStore"
+    TOOLS = "TOOLS"
+
+DEFAULT_MODEL = ModelMethod.TOOLS
 
 # ========== USAGE ==========
 USAGE_PROGRAM_NAME  = """
@@ -50,6 +62,9 @@ Stellt die als Argument übergebene Frage an den Bot.
 """
 USAGE_DATABASE      = """
 Spezifiziert die zu nutzende Vektor-Datenbank.
+"""
+USAGE_MODEL      = """
+Spezifiziert das zu nutzende Model.
 """
 USAGE_INIT          = """
 Die Vektor-Datenbank wird neu erstellt.
