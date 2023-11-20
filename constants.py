@@ -4,7 +4,9 @@ from enum                           import Enum
 from langchain.chat_models          import ChatOpenAI
 from langchain.prompts              import PromptTemplate
 from langchain.text_splitter        import CharacterTextSplitter
+from dataclasses                    import dataclass
 import enum
+
 
 load_dotenv(find_dotenv())
 
@@ -73,3 +75,14 @@ Gibt die aus der Vektor-Datenbank gelesenen Dokumente aus, anstelle der Antwort.
 USAGE_CLI           = """
 Es wird die Kommandozeile verwendet, um eine Frage zu stellen.
 """
+
+# ========== REST ==========
+@dataclass
+class DefaultArgs:
+    question: str = ""
+    database: str = DEFAULT_DATABASE
+    model: str = DEFAULT_MODEL
+    init: bool = False
+    cv: bool = False
+    cli: bool = False
+

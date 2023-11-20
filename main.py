@@ -24,6 +24,11 @@ def main():
         parser.print_help()
         return
     
+
+    print(invoke_chain(args))
+
+
+def invoke_chain(args) -> str:
     modelType : constants.ModelMethod = args.model
 
     match modelType:
@@ -51,11 +56,13 @@ def main():
         # Answer the question or show the relevant vectors
         if args.cv:
             if hasattr(model, 'retriver'):
-                print(model.retriver.invoke(user_input))
+                return model.retriver.invoke(user_input)
             else:
-                print("Das Model " + modelType + "besitzt keinen Retriver!")
+                return("Das Model " + modelType + "besitzt keinen Retriver!")
 
-        print(chain.invoke(user_input))
+    return chain.invoke(user_input)
+    
+
 
 if __name__ == "__main__":
     main()
