@@ -66,6 +66,7 @@ def get_retriever(name, init_func  : Callable[[], List[Document] ], mode=constan
             db = load_chroma(path)
         else:
             print ("ERROR: Database has not been initialized")
+            return None
     
     return db.as_retriever()
 

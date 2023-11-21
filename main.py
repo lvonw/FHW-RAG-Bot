@@ -37,6 +37,8 @@ def main():
 
     # Get the correct database and initialize it if demanded
     model.init(args.database, args.init)
+    if not model:
+        return
     chain = model.getModel()
     
     # Handle the question answering
