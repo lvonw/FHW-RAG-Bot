@@ -55,7 +55,7 @@ def main():
             else:
                 print("Das Model " + modelType + "besitzt keinen Retriever!")
         else:
-            print(chain.invoke(user_input))
+            print("Antwort: " + chain.invoke(user_input))
 
 if __name__ == "__main__":
     main()

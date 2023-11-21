@@ -12,7 +12,7 @@ load_dotenv(find_dotenv())
 PATH_VECTORDB               = "./data"
 PATH_VECTORDB_SPLITTER      = "./vectordb/splitter/"
 PATH_VECTORDB_PDFLOADER     = "./vectordb/pdfloader/"
-PATH_PDF        = "data/pdfs/"
+PATH_PDF                    = "data/pdfs/"
 
 # ========== LLM ==========
 TEMPLATE        = """ 
@@ -32,7 +32,7 @@ enthalten:
 Frage: {question}""" 
 PROMPT = PromptTemplate(
     input_variables = ["context", "question"],
-    template        = TEMPLATE)
+    template        = TEMPLATE_ALT)
 GPT_TURBO       = "gpt-3.5-turbo-1106"
 TEMPERATURE     = 0.0
 API_KEY         = os.environ["OPENAI_API_KEY"]
