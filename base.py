@@ -27,10 +27,6 @@ class ModelBase(ABC):
     def getModel(self):
         pass
 
-    
-
-
-
 
 def init_and_persist_chroma(docs, path): 
     db = Chroma.from_documents(
@@ -47,7 +43,7 @@ def load_chroma(path):
 def get_loader(mode, glob = "**/*.pdf"):
     match mode:
         case constants.TokenizeMethod.CHAR_SPLITTER: 
-           return PyPDFDirectoryLoader(path=constants.PATH_PDF) 
+            return PyPDFDirectoryLoader(path=constants.PATH_PDF) 
         case constants.TokenizeMethod.PDF_LOADER: 
             return DirectoryLoader(constants.PATH_PDF, glob=glob, loader_cls=PDFCustomLoader)
 
@@ -69,8 +65,6 @@ def get_retriever(name, init_func  : Callable[[], List[Document] ], mode=constan
         db = load_chroma(path)
     
     return db.as_retriever()
-
-
 
 def get_retrieverTool(name, init_func  : Callable[[], List[Document] ], mode=constants.DEFAULT_DATABASE, init=False, description=""):
     docstore = RetrievalQA.from_chain_type(constants.LLM, retriever=get_retriever(name, init_func, mode, init))

@@ -20,6 +20,16 @@ Beantworte die Frage ausschließlich mit dem hier gegebenen Kontext:
 {context}
 
 Frage: {question}""" 
+
+TEMPLATE_ALT    = """ 
+Beantworte die Frage ausschließlich mit dem hier gegebenen Kontext.
+Solltest Du noch weitere Informationen benötigen erstelle bitte einen Prompt
+für ein Sprachmodell welches diese Daten anfordert. Beginne diese Anfrage exakt
+mit dem exakten Kennwort "PROMPT". Dieser prompt muss die originäre Frage 
+enthalten:
+{context}
+
+Frage: {question}""" 
 PROMPT = PromptTemplate(
     input_variables = ["context", "question"],
     template        = TEMPLATE)
@@ -48,7 +58,7 @@ class ModelMethod(enum.Enum):
     VECSTORE = "VecStore"
     TOOLS = "TOOLS"
 
-DEFAULT_MODEL = ModelMethod.TOOLS
+DEFAULT_MODEL = ModelMethod.VECSTORE
 
 # ========== USAGE ==========
 USAGE_PROGRAM_NAME  = "FHDocsBot"

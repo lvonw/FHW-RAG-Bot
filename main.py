@@ -50,12 +50,12 @@ def main():
 
         # Answer the question or show the relevant vectors
         if args.cv:
-            if hasattr(model, 'retriver'):
-                print(model.retriver.invoke(user_input))
+            if hasattr(model, 'retriever'):
+                print(model.retriever.invoke(user_input))
             else:
-                print("Das Model " + modelType + "besitzt keinen Retriver!")
-
-        print(chain.invoke(user_input))
+                print("Das Model " + modelType + "besitzt keinen Retriever!")
+        else:
+            print(chain.invoke(user_input))
 
 if __name__ == "__main__":
     main()
