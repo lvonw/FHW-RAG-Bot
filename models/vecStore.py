@@ -13,7 +13,6 @@ def getRetriever(mode, init):
 
 def format_docs(docs):
     doc =  "\n\n".join([d.page_content for d in docs])
-    print(doc)
     return doc
 
 def getModel(retriever):

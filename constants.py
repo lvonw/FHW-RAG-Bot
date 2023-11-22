@@ -9,7 +9,7 @@ import enum
 load_dotenv(find_dotenv())
 
 # ========== PATHS ==========
-PATH_VECTORDB               = "./data"
+PATH_VECTORDB               = "./data/models/"
 PATH_VECTORDB_SPLITTER      = "./vectordb/splitter/"
 PATH_VECTORDB_PDFLOADER     = "./vectordb/pdfloader/"
 PATH_PDF                    = "data/pdfs/"
@@ -57,7 +57,10 @@ DEFAULT_DATABASE = TokenizeMethod.PDF_LOADER
 class ModelMethod(enum.Enum):
     VECSTORE = "VecStore"
     TOOLS = "TOOLS"
+    CustomTool = "CustomTool"
 
+#DEFAULT_MODEL = ModelMethod.TOOLS
+#DEFAULT_MODEL = ModelMethod.CustomTool
 DEFAULT_MODEL = ModelMethod.VECSTORE
 
 # ========== USAGE ==========
@@ -76,6 +79,9 @@ Spezifiziert das zu nutzende Model.
 """
 USAGE_INIT          = """
 Die Vektor-Datenbank wird neu erstellt.
+"""
+USAGE_VALIDATE          = """
+Es werden Testfragen ausgegeben.
 """
 USAGE_CLOSEST_V     = """
 Gibt die aus der Vektor-Datenbank gelesenen Dokumente aus, anstelle der Antwort.

@@ -23,7 +23,7 @@ def get_Tools(mode=constants.DEFAULT_DATABASE, init=False):
 
 
 def getModel(tools):
-    agent = initialize_agent(tools, constants.LLM, agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION, handle_parsing_errors=True)
+    agent = initialize_agent(tools, constants.LLM, agent=AgentType.OPENAI_FUNCTIONS, handle_parsing_errors=True)
     
     #====================
     # vectorstore_info = VectorStoreInfo(

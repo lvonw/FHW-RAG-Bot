@@ -1,7 +1,7 @@
 .env
 /data/pdfs/*
-data/*/*/*
-data/vectordb
+/data/*
 models/__pycache__
 /assignment/
 /__pycache__/
+/.vscode
