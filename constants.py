@@ -52,12 +52,15 @@ um weitere Texte zu finden.
 """
 
 SMART_AGENT_PROMPT  = """
-Verwende die Search-Funktion, um ähnliche Textabschnitte zu finden. Wenn der 
-Textabschnitt nicht die gewünschte Antwort liefert, verwende die More-Funktion, 
-um weitere Texte zu finden.
+Verwende die Search-Funktion, um Textabschnitte zu finde, die die Frage 
+beantworten könnten. Benutze die More funktion NUR dann wenn 
+die Informationen aus Search nicht reichen um die
+Frage ausreichend gut zu beantworten, um weitere Informationen zu finden.
+Verwende zur beantwortung ausschließlich die, aus diesen Funktionen gewonnenen 
+informationen.
 """
 
-MAX_TOKENS      = 4069
+MAX_TOKENS      = 3900
 
 # ========== DATABASE ==========
 class TokenizeMethod(enum.Enum):
@@ -79,7 +82,7 @@ class ModelMethod(enum.Enum):
 #DEFAULT_MODEL = ModelMethod.VECSTORE
 DEFAULT_MODEL  = ModelMethod.SMART_AGENT
 
-DEFAULT_DOC_AMOUNT = 20 
+DEFAULT_DOC_AMOUNT = 10 
 
 # ========== USAGE ==========
 USAGE_PROGRAM_NAME  = "FHDocsBot"

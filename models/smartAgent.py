@@ -18,8 +18,7 @@ from langchain.schema.document import Document
 
 from models.tools import getModel
 
-def get_custom_retriever(retriever : VectorStoreRetriever, 
-                         k = constants.DEFAULT_DOC_AMOUNT):
+def get_custom_retriever(retriever : VectorStoreRetriever):
     docs = None 
     idx = 0
 
@@ -32,16 +31,16 @@ def get_custom_retriever(retriever : VectorStoreRetriever,
         """
         nonlocal docs
         nonlocal idx
-        nonlocal k
         # Init the documents
-        docs = retriever_call(retriever, query, k)
-
+        docs = retriever_call(retriever, query, constants.DEFAULT_DOC_AMOUNT)
         res, idx = get_dynamic_doc_amount(docs, idx)
         return res
 
     @tool
     def more() -> str:
-        """Returns more documents of similar content already searched 
+        """Returns more documents of similar content already searched, only
+        use if search didnt return enough information to answer the quesiton
+        sufficiently 
         """
         nonlocal docs
         nonlocal idx
@@ -50,7 +49,7 @@ def get_custom_retriever(retriever : VectorStoreRetriever,
         return res
     
     prompt = ChatPromptTemplate.from_messages([
-        ("system",  constants.AGENT_PROMPT),
+        ("system",  constants.SMART_AGENT_PROMPT),
         ("human",   "{input}"),
         MessagesPlaceholder(variable_name="agent_scratchpad")])
 
@@ -70,14 +69,14 @@ def get_custom_retriever(retriever : VectorStoreRetriever,
         | OpenAIFunctionsAgentOutputParser()
     )
 
-    agent = AgentExecutor(agent=agent, tools=tools, verbose=False)
+    agent = AgentExecutor(agent=agent, tools=tools, verbose=True)
     return RunnableLambda(lambda x: {"input" : x}) | agent
 
 def retriever_call(r : VectorStoreRetriever, q, k) -> List[Document]:
     return r.get_relevant_documents(q, search_kwargs = {'k': k})
 
 def compute_token_amount(doc : str):
-    return len(doc) / 3 
+    return (len(doc) / 4) 
 
 def get_docs_content(doc : Document) -> str:
     return doc.page_content
@@ -105,7 +104,7 @@ class Model(ModelBase):
     def init(self, mode, init):
         def loader(mode):
             return get_loader(mode, "**/*.pdf").load_and_split(constants.SPLITTER)    
-        self.retriever = get_retriever("retriever", loader, mode, init)
+        self.retriever = get_retriever("retriever", loader, mode, init, constants.DEFAULT_DOC_AMOUNT)
 
     def getModel(self):
         return get_custom_retriever(self.retriever)
