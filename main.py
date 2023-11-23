@@ -15,9 +15,18 @@ import constants
 import models.tools
 import models.vecStore
 import models.customTools
+import models.smartAgent
 
 
 from parsing import prepare_arg_parser
+
+def get_answer(answer):
+    if isinstance(answer, str):
+        return answer
+    elif isinstance(answer, dict):
+        return answer["output"]
+    else:
+        raise "ERROR: Answer type " + type(answer)  + "not defined"
 
 def get_user_input():
     return input(constants.INPUT_PROMPT)
@@ -52,6 +61,8 @@ def main():
             model = models.vecStore.Model()
         case constants.ModelMethod.CustomTool:
             model = models.customTools.Model()
+        case constants.ModelMethod.SMART_AGENT:
+            model = models.smartAgent.Model()
         case _: 
             print("Model type unknown")
             return
@@ -69,9 +80,7 @@ def main():
 
     # Get the correct database and initialize it if demanded
     model.init(args.database, args.init)
-    if not model:
-        return
-    chain = model.getModel()
+
     
     if args.validate:
         with open(f"validation{args.model}_{args.database}.html", "w", encoding="utf-8") as file:
@@ -89,11 +98,17 @@ def main():
                     file.write(f"<font color=\"red\">{retr}</font>\n")
                     print(colors.fg.red + retr)
 
-                answer = chain.invoke(question)
+                chain = model.getModel()
+                answer = get_answer(chain.invoke(question))
                 print(colors.fg.green + "Antwort: " + answer)
                 file.write(f"<font color=\"green\">Antwort: {answer}</font>\n")
                 print("=============")
             file.write("</span>")#show new line in html!
+        return 
+    
+    if not model:
+        return
+    chain = model.getModel()
 
     # Handle the question answering
     if args.question or args.cli:
@@ -111,7 +126,9 @@ def main():
             else:
                 print("Das Model " + modelType + "besitzt keinen Retriever!")
         else:
-            print(colors.bg.green + "Antwort: " + chain.invoke(user_input))
+            print(colors.bg.green 
+                  + "Antwort: " + 
+                  get_answer(chain.invoke(user_input)))
 
 if __name__ == "__main__":
     main()

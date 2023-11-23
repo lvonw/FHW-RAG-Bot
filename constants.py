@@ -45,6 +45,20 @@ SPLITTER    = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
 
 INPUT_PROMPT    = "Wie kann ich Dir helfen?: "
 
+AGENT_PROMPT    = """
+Verwende die Search-Funktion, um ähnliche Textabschnitte zu finden. Wenn der 
+Textabschnitt nicht die gewünschte Antwort liefert, verwende die More-Funktion, 
+um weitere Texte zu finden.
+"""
+
+SMART_AGENT_PROMPT  = """
+Verwende die Search-Funktion, um ähnliche Textabschnitte zu finden. Wenn der 
+Textabschnitt nicht die gewünschte Antwort liefert, verwende die More-Funktion, 
+um weitere Texte zu finden.
+"""
+
+MAX_TOKENS      = 4069
+
 # ========== DATABASE ==========
 class TokenizeMethod(enum.Enum):
     PDF_LOADER = "PDF Loader"
@@ -58,10 +72,14 @@ class ModelMethod(enum.Enum):
     VECSTORE = "VecStore"
     TOOLS = "TOOLS"
     CustomTool = "CustomTool"
+    SMART_AGENT = "SmartAgent"
 
 #DEFAULT_MODEL = ModelMethod.TOOLS
 #DEFAULT_MODEL = ModelMethod.CustomTool
-DEFAULT_MODEL = ModelMethod.VECSTORE
+#DEFAULT_MODEL = ModelMethod.VECSTORE
+DEFAULT_MODEL  = ModelMethod.SMART_AGENT
+
+DEFAULT_DOC_AMOUNT = 20 
 
 # ========== USAGE ==========
 USAGE_PROGRAM_NAME  = "FHDocsBot"
