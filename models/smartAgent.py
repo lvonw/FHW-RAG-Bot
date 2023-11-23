@@ -90,6 +90,7 @@ def get_dynamic_doc_amount(docs : List[Document], startIdx) -> str:
             and (length + compute_token_amount(get_docs_content(docs[idx])) 
                 < constants.MAX_TOKENS)):   
         
+        print(docs[idx].metadata)
         result += get_docs_content(docs[idx])
         idx += 1
 

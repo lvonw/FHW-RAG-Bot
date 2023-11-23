@@ -32,7 +32,7 @@ enthalten:
 Frage: {question}""" 
 PROMPT = PromptTemplate(
     input_variables = ["context", "question"],
-    template        = TEMPLATE_ALT)
+    template        = TEMPLATE)
 GPT_TURBO       = "gpt-3.5-turbo-1106"
 TEMPERATURE     = 0.0
 API_KEY         = os.environ["OPENAI_API_KEY"]
