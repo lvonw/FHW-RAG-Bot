@@ -57,6 +57,7 @@ def main():
 
 
 def invoke_chain(args) -> str:
+    output:str = ""
     modelType : constants.ModelMethod = args.model
 
     match modelType:
@@ -69,8 +70,7 @@ def invoke_chain(args) -> str:
         case constants.ModelMethod.SMART_AGENT:
             model = models.smartAgent.Model()
         case _: 
-            print("Model type unknown")
-            return
+            return output + "Model type unknown"
 
 
     #test Docs:
@@ -95,19 +95,19 @@ def invoke_chain(args) -> str:
             
             for question in validation:
 
-                print(colors.fg.blue + "Frage: " + question )
+                output += colors.fg.blue + "Frage: " + question
                 file.write(f"<font color=\"blue\">Frage: {question}</font>\n")
 
                 if hasattr(model, 'retriever'):
                     retr = models.vecStore.format_docs(model.retriever.invoke(question))
                     file.write(f"<font color=\"red\">{retr}</font>\n")
-                    print(colors.fg.red + retr)
+                    output += colors.fg.red + retr
 
                 chain = model.getModel()
                 answer = get_answer(chain.invoke(question))
-                print(colors.fg.green + "Antwort: " + answer)
+                output += colors.fg.green + "Antwort: " + answer
                 file.write(f"<font color=\"green\">Antwort: {answer}</font>\n")
-                print("=============")
+                output += "============="
             file.write("</span>")#show new line in html!
         return 
     
@@ -127,15 +127,16 @@ def invoke_chain(args) -> str:
         # Answer the question or show the relevant vectors
         if args.cv:
             if hasattr(model, 'retriever'):
-                print(models.vecStore.format_docs(model.retriever.invoke(user_input)))
-            if hasattr(model, 'retriver'):
-                return model.retriver.invoke(user_input)
+                output += models.vecStore.format_docs(model.retriever.invoke(user_input))
             else:
-                print("Das Model " + modelType + "besitzt keinen Retriever!")
+                output += "Das Model " + modelType + "besitzt keinen Retriever!"
         else:
-            print(colors.bg.green 
+            output += (colors.bg.green 
                   + "Antwort: " + 
                   get_answer(chain.invoke(user_input)))
+            
+    return output
+
 
 if __name__ == "__main__":
     main()

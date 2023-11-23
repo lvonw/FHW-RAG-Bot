@@ -120,6 +120,7 @@ class DefaultArgs:
     database: str = DEFAULT_DATABASE
     model: str = DEFAULT_MODEL
     init: bool = False
+    validate:bool = False
     cv: bool = False
     cli: bool = False
 

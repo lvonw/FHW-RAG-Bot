@@ -35,6 +35,7 @@ def test_chat_endpoint_all(mock_invoke_chain, client):
     args.database = 'PDF Loader'
     args.model = 'TOOLS'
     args.init = False
+    args.validate = False
     args.cv = True
     
 
@@ -43,6 +44,7 @@ def test_chat_endpoint_all(mock_invoke_chain, client):
         'database': args.database,
         'model': args.model,
         'init': args.init,
+        'validate': args.validate,
         'cv': args.cv,
     })
 
