@@ -13,12 +13,11 @@ def getRetriever(mode, init):
 
 def format_docs(docs):
     doc =  "\n\n".join([d.page_content for d in docs])
-    print(doc)
     return doc
 
-def getModel(retriver):
+def getModel(retriever):
     question_chain = (
-        {"context": retriver | format_docs, "question": RunnablePassthrough()} 
+        {"context": retriever | format_docs, "question": RunnablePassthrough()} 
         | constants.PROMPT 
         | constants.LLM 
         | StrOutputParser())
@@ -27,9 +26,9 @@ def getModel(retriver):
 
 class Model(ModelBase):
     def init(self, mode, init):
-        self.retriver = getRetriever(mode, init)
+        self.retriever = getRetriever(mode, init)
 
     def getModel(self):
-        return getModel(self.retriver)
+        return getModel(self.retriever)
         
     

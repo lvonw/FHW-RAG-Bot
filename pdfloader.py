@@ -1,4 +1,6 @@
 from abc import ABC
+import json
+import yaml
 from typing import Any, Dict, Iterator, List, Mapping, Optional, Sequence
 import pdfplumber
 import pandas as pd
@@ -6,6 +8,9 @@ from langchain.document_loaders.pdf import BasePDFLoader
 from langchain.document_loaders.base import BaseBlobParser, Document
 from langchain.document_loaders import Blob
 from langchain.schema import BaseDocumentTransformer
+from tqdm import tqdm
+
+from tableToStruct import ConvertTable
 
 def keep_bold_chars(obj):
     if obj['object_type'] == 'char':
@@ -18,33 +23,35 @@ def keep_normal_chars(obj):
     return True
 
 class PdfBaseElement(ABC):
-    def __init__(self, text):
-        self.text = text
-    
-    def getText(self):
-        return self.text
-    
     def __repr__(self):
         return str(self)
 
 class PdfSectionElement(PdfBaseElement):
+    def __init__(self, text):
+        self.text = text
+
     def __str__(self):
-        return f'Secttion: {self.text}'
+        return f'Section: {self.text}'
 
 
 class PdfTextElement(PdfBaseElement):
+    def __init__(self, text):
+        self.text = text
+
     def __str__(self):
         return f'Text: {self.text}'
 
 class PdfTableElement(PdfBaseElement):
+    def __init__(self, table):
+        self.table = table    
     def __str__(self):
-        return f'Table: {self.text}'
+        return f'Table:'
 
 def parsePdf(path) -> List[PdfBaseElement]:
     PdfData = []
 
     with pdfplumber.open(path) as pdf:
-        for page in pdf.pages:
+        for page in tqdm(pdf.pages):
             tables = page.find_tables(table_settings={})
 
             def withoutTable(obj):
@@ -84,8 +91,8 @@ def parsePdf(path) -> List[PdfBaseElement]:
             
             for table in tables:
                 res = table.extract()
-                df = pd.DataFrame(res[1:], columns=res[0])
-                TextElements.append({'table': 'True', 'bbox' : table.bbox, 'text' : df.to_html()})
+                #df = pd.DataFrame(res[1:], columns=res[0])
+                TextElements.append({'table': 'True', 'bbox' : table.bbox, 'data' : res})
 
             TextElements.sort(key=lambda x : x['bbox'][1])
 
@@ -97,7 +104,7 @@ def parsePdf(path) -> List[PdfBaseElement]:
                         PdfData[-1].text += TextElements[i]['text']
                     else:
                         if "table" in TextElements[i]:
-                            PdfData.append(PdfTableElement(TextElements[i]['text']))
+                            PdfData.append(PdfTableElement(TextElements[i]['data']))
                         else:
                             PdfData.append(PdfSectionElement(TextElements[i]['text']))
                            
@@ -205,30 +212,51 @@ class PDFCustomParser(BaseBlobParser):
         self.dedupe = dedupe
         self.extract_images = extract_images
 
+
+
     def lazy_parse(self, blob: Blob) -> Iterator[Document]:
         """Lazily parse the blob."""
 
         with blob.as_bytes_io() as file_path:
             data = parsePdf(file_path)
             
-            yield from [
-                Document(
-                    page_content= ele.text,
-                    metadata=dict(
-                        {
-                            "source": blob.source,
-                            "file_path": blob.source,
-                            "type" : ele.__class__.__name__
-                        }
-                    ),
-                )
-                for ele in data
-            ]
+            for ele in data:
 
+                def getDoc(text, blob, type):
+                    return Document(
+                        page_content= text,
+                        metadata=dict(
+                            {
+                                "source": blob.source,
+                                "type" : type
+                            }
+                        ),
+                    )
+                
+                text = ""
+                if isinstance(ele, PdfTableElement):
+                    table_data : List[List[str | None]] = ele.table
+                    if len(table_data[0]) > 5:
+                        #2. to json
+                        jsonData = ConvertTable(table_data)
+                        for row in jsonData:
+                            rowyaml = yaml.dump(row,allow_unicode=True)
+                            rowjson = json.dumps(row,indent=4,separators=(',', ': '))
+                            yield getDoc(rowyaml, blob, "PdfTableElementRow")
+                    else:
+                        #1. convert to df
+                        df = pd.DataFrame(table_data[1:], columns=table_data[0])
+                        text = df.to_html()
+                        yield getDoc(text, blob, ele.__class__.__name__)
+                        #text = df.to_json()
+                        #text = df.to_markdown()
+                else:
+                    yield getDoc(ele.text, blob, ele.__class__.__name__)
+                
 
 if __name__ == "__main__":
-    path = "data/PVO_2023_V5.pdf"
-    #path = "data/Curriculum-B_Inf.pdf"
+    #path = "data/PVO_2023_V5.pdf"
+    path = "data/pdfs/Curriculum-B_Inf.pdf"
     #path = "data/Master_Informatik.pdf"
     # data = parsePdf(path)
     # for entry in data:

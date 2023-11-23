@@ -58,6 +58,11 @@ def prepare_arg_parser():
                         dest="init",
                         action="store_true",
                         help=constants.USAGE_INIT)
+    parser.add_argument("-v", 
+                        "--validate", 
+                        dest="validate",
+                        action="store_true",
+                        help=constants.USAGE_INIT)
     parser.add_argument("-cv",
                         "--closest-vectors",
                         dest="cv",
