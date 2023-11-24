@@ -87,14 +87,15 @@ def retriever_call(retriever, query, k):
 
 
 class Model(ModelBase):    
-    def init(self, mode, init):    
-        self.retriever = get_retriever("Curr", self.__loader, mode, init)
+    def init(self, mode, init):   
+        def loader(mode):
+            return get_loader(mode, "**/*.pdf").load_and_split(constants.SPLITTER) 
+        self.retriever = get_retriever("Curr", loader, mode, init)
 
     def getModel(self):
         return get_custom_retriever(self.retriever)
         # return customRetrieverQA(self.retriever).getModel()
     
-    def __loader(mode):
-        return get_loader(mode, "**/*.pdf").load_and_split(constants.SPLITTER)
+    
         
     
