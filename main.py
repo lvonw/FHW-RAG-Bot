@@ -16,6 +16,7 @@ import models.tools
 import models.vecStore
 import models.customTools
 import models.smartAgent
+import models.assistantApi
 
 
 from parsing import prepare_arg_parser
@@ -69,6 +70,8 @@ def invoke_chain(args) -> str:
             model = models.customTools.Model()
         case constants.ModelMethod.SMART_AGENT:
             model = models.smartAgent.Model()
+        case constants.ModelMethod.OpenAI_ASSISTANT:
+            model = models.assistantApi.Model()
         case _: 
             return output + "Model type unknown"
 
@@ -89,7 +92,7 @@ def invoke_chain(args) -> str:
     
     if args.validate:
         with open(f"validation{args.model}_{args.database}.html", "w", encoding="utf-8") as file:
-            file.write("<span style=\"white-space: pre-line\">")#show new line in html!
+            file.write("<span style=\"white-space: pre\">")#show new line in html!
             info = f"model: {args.model}\ndatabase:{args.database}"
             file.write(f"<font color=\"blue\">Params:\n{info}</font>\n")
             

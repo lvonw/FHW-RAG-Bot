@@ -81,7 +81,8 @@ class ModelMethod(enum.Enum):
     TOOLS = "TOOLS"
     CustomTool = "CustomTool"
     SMART_AGENT = "SmartAgent"
-
+    OpenAI_ASSISTANT = "OpenAIAssistant"
+    
 #DEFAULT_MODEL = ModelMethod.TOOLS
 #DEFAULT_MODEL = ModelMethod.CustomTool
 #DEFAULT_MODEL = ModelMethod.VECSTORE
