@@ -20,7 +20,7 @@ c-ares=1.21.0=h93a5062_0
 ca-certificates=2023.08.22=hca03da5_0
 cachetools=4.2.2=pyhd3eb1b0_0
 cairo=1.16.0=h302bd0f_5
-certifi=2023.7.22=py311hca03da5_0
+certifi=2023.11.17=py311hca03da5_0
 cffi=1.15.1=py311h80987f9_3
 charset-normalizer=2.0.4=pyhd3eb1b0_0
 chroma-hnswlib=0.7.3=py311hddbb800_1
@@ -39,6 +39,7 @@ exceptiongroup=1.0.4=py311hca03da5_0
 expat=2.5.0=h313beb8_0
 fastapi=0.103.2=pyhd8ed1ab_0
 fftw=3.3.10=nompi_h3046061_106
+flask=2.2.2=py311hca03da5_0
 font-ttf-dejavu-sans-mono=2.37=hd3eb1b0_0
 font-ttf-inconsolata=2.001=hcb22688_0
 font-ttf-source-code-pro=2.030=hd3eb1b0_0
@@ -79,7 +80,9 @@ importlib-metadata=6.0.0=py311hca03da5_0
 importlib-resources=6.1.1=pyhd8ed1ab_0
 importlib_resources=6.1.1=pyhd8ed1ab_0
 iniconfig=1.1.1=pyhd3eb1b0_0
+itsdangerous=2.0.1=pyhd3eb1b0_0
 jbig=2.1=h1a28f6b_0
+jinja2=3.1.2=py311hca03da5_0
 joblib=1.2.0=py311hca03da5_0
 jpeg=9e=h80987f9_1
 jsonpatch=1.33=pyhd8ed1ab_0
@@ -125,6 +128,7 @@ libxml2=2.10.4=h2aff0a6_0
 libzlib=1.2.13=h53f4e23_5
 llvm-openmp=14.0.6=hc6e5704_0
 markdown-it-py=2.2.0=py311hca03da5_1
+markupsafe=2.1.1=py311h80987f9_0
 marshmallow=3.19.0=py311hca03da5_0
 marshmallow-enum=1.5.1=py311hca03da5_0
 matplotlib-base=3.8.0=py311h7aedaa7_0
@@ -229,6 +233,7 @@ urllib3=1.26.18=py311hca03da5_0
 uvicorn=0.20.0=py311hca03da5_0
 wand=0.6.10=pyhd8ed1ab_0
 websocket-client=0.58.0=py311hca03da5_4
+werkzeug=2.2.3=py311hca03da5_0
 wheel=0.41.3=pyhd8ed1ab_0
 wrapt=1.14.1=py311h80987f9_0
 xorg-kbproto=1.0.7=h27ca646_1002
