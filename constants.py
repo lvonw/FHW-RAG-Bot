@@ -68,12 +68,12 @@ denke Schritt für Schritt.
 MAX_TOKENS      = 3900
 
 # ========== DATABASE ==========
-class TokenizeMethod(enum.Enum):
-    PDF_LOADER = "PDF Loader"
-    CHAR_SPLITTER = "Character Splitter"
+class LoaderMethod(enum.Enum):
+    CustomPDF_LOADER = "CustomLoader"
+    PyPDF_LOADER = "PyPdfLoader"
 
 INIT_CHROMA = False
-DEFAULT_DATABASE = TokenizeMethod.PDF_LOADER
+DEFAULT_DATABASE = LoaderMethod.CustomPDF_LOADER
 
 # ========== MODELS ==========
 class ModelMethod(enum.Enum):

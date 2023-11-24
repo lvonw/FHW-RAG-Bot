@@ -43,7 +43,7 @@ def prepare_arg_parser():
                         default=constants.DEFAULT_DATABASE,
                         nargs=1,
                         help=constants.USAGE_DATABASE,
-                        type=constants.TokenizeMethod,
+                        type=constants.LoaderMethod,
                         action=EnumAction) 
     parser.add_argument("-m",
                         "--model",

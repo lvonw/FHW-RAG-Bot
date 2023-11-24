@@ -20,7 +20,7 @@ from langchain.document_loaders import DirectoryLoader
 
 class ModelBase(ABC):
     @abstractmethod
-    def init(self, mode : constants.TokenizeMethod, init : bool):
+    def init(self, mode : constants.LoaderMethod, init : bool):
         pass
 
     @abstractmethod
@@ -90,17 +90,17 @@ def load_chroma(path):
 
 def get_loader(mode, glob = "**/*.pdf"):
     match mode:
-        case constants.TokenizeMethod.CHAR_SPLITTER: 
+        case constants.LoaderMethod.PyPDF_LOADER: 
             return PyPDFDirectoryLoader(path=constants.PATH_PDF) 
-        case constants.TokenizeMethod.PDF_LOADER: 
+        case constants.LoaderMethod.CustomPDF_LOADER: 
             return DirectoryLoader(constants.PATH_PDF, glob=glob, loader_cls=PDFCustomLoader, show_progress=True)
 
 
 def get_path(mode, name):
     match mode:
-        case constants.TokenizeMethod.CHAR_SPLITTER: 
+        case constants.LoaderMethod.PyPDF_LOADER: 
             return os.path.join(constants.PATH_VECTORDB, name, constants.PATH_VECTORDB_SPLITTER)       
-        case constants.TokenizeMethod.PDF_LOADER: 
+        case constants.LoaderMethod.CustomPDF_LOADER: 
             return os.path.join(constants.PATH_VECTORDB, name, constants.PATH_VECTORDB_PDFLOADER)
 
 def get_retriever(name, init_func  : Callable[[], List[Document] ], mode=constants.DEFAULT_DATABASE, init=False, k = 1):
