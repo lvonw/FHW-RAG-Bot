@@ -1,11 +1,12 @@
 import os
+import enum
 from dotenv                         import load_dotenv, find_dotenv
 from enum                           import Enum
 from langchain.chat_models          import ChatOpenAI
 from langchain.prompts              import PromptTemplate
 from langchain.text_splitter        import CharacterTextSplitter
 from dataclasses                    import dataclass
-import enum
+
 
 
 load_dotenv(find_dotenv())
@@ -59,7 +60,9 @@ beantworten könnten. Benutze die More funktion NUR dann wenn
 die Informationen aus Search nicht reichen um die
 Frage ausreichend gut zu beantworten, um weitere Informationen zu finden.
 Verwende zur beantwortung ausschließlich die, aus diesen Funktionen gewonnenen 
-informationen.
+informationen. 
+Bevor du antwortest, hohle einmal tief luft, entspanne dich und
+denke Schritt für Schritt.
 """
 
 MAX_TOKENS      = 3900

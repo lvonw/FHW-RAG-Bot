@@ -1,22 +1,19 @@
-from base import ModelBase, get_loader, get_retriever
 import constants
 
-from langchain.agents.agent import AgentExecutor
-from langchain.schema.vectorstore import  VectorStoreRetriever
-from langchain.schema.runnable import RunnableLambda
-from langchain.prompts import ChatPromptTemplate
-from langchain.prompts import ChatPromptTemplate, MessagesPlaceholder
-from langchain.tools.render import format_tool_to_openai_function
+from base                               import ModelBase, get_loader, get_retriever
+from langchain.agents.agent             import AgentExecutor
+from langchain.schema.vectorstore       import  VectorStoreRetriever
+from langchain.schema.runnable          import RunnableLambda
+from langchain.prompts                  import ChatPromptTemplate, MessagesPlaceholder
+from langchain.tools.render             import format_tool_to_openai_function
 from langchain.agents.format_scratchpad import format_to_openai_function_messages
-from langchain.agents.output_parsers import OpenAIFunctionsAgentOutputParser
-from langchain.agents import AgentExecutor
-from langchain.tools import tool
-from langchain.schema import StrOutputParser
+from langchain.agents.output_parsers    import OpenAIFunctionsAgentOutputParser
+from langchain.agents                   import AgentExecutor
+from langchain.tools                    import tool
 
-from typing import List
-from langchain.schema.document import Document
+from typing                             import List
+from langchain.schema.document          import Document
 
-from models.tools import getModel
 
 def get_custom_retriever(retriever : VectorStoreRetriever):
     docs = None 
@@ -103,8 +100,14 @@ def get_dynamic_doc_amount(docs : List[Document], startIdx) -> str:
 class Model(ModelBase):    
     def init(self, mode, init):
         def loader(mode):
-            return get_loader(mode, "**/*.pdf").load_and_split(constants.SPLITTER)    
-        self.retriever = get_retriever("retriever", loader, mode, init, constants.DEFAULT_DOC_AMOUNT)
+            loader = get_loader(mode, "**/*.pdf")
+            return loader.load_and_split(constants.SPLITTER)
+           
+        self.retriever = get_retriever("retriever", 
+                                       loader, 
+                                       mode, 
+                                       init, 
+                                       constants.DEFAULT_DOC_AMOUNT)
 
     def getModel(self):
         return get_custom_retriever(self.retriever)
