@@ -23,11 +23,14 @@ def keep_normal_chars(obj):
     return True
 
 class PdfBaseElement(ABC):
+    def __init__(self, page):
+        self.page = page
     def __repr__(self):
         return str(self)
 
 class PdfSectionElement(PdfBaseElement):
-    def __init__(self, text):
+    def __init__(self, text, page):
+        PdfBaseElement.__init__(self,page)
         self.text = text
 
     def __str__(self):
@@ -35,14 +38,16 @@ class PdfSectionElement(PdfBaseElement):
 
 
 class PdfTextElement(PdfBaseElement):
-    def __init__(self, text):
+    def __init__(self, text,page):
+        PdfBaseElement.__init__(self,page)
         self.text = text
 
     def __str__(self):
         return f'Text: {self.text}'
 
 class PdfTableElement(PdfBaseElement):
-    def __init__(self, table):
+    def __init__(self, table, page):
+        PdfBaseElement.__init__(self,page)
         self.table = table    
     def __str__(self):
         return f'Table:'
@@ -52,6 +57,7 @@ def parsePdf(path) -> List[PdfBaseElement]:
 
     with pdfplumber.open(path) as pdf:
         for page in tqdm(pdf.pages):
+           
             tables = page.find_tables(table_settings={})
 
             def withoutTable(obj):
@@ -104,9 +110,9 @@ def parsePdf(path) -> List[PdfBaseElement]:
                         PdfData[-1].text += TextElements[i]['text']
                     else:
                         if "table" in TextElements[i]:
-                            PdfData.append(PdfTableElement(TextElements[i]['data']))
+                            PdfData.append(PdfTableElement(TextElements[i]['data'], page.page_number))
                         else:
-                            PdfData.append(PdfSectionElement(TextElements[i]['text']))
+                            PdfData.append(PdfSectionElement(TextElements[i]['text'], page.page_number))
                            
                 
                 def textBetween(obj):
@@ -115,7 +121,7 @@ def parsePdf(path) -> List[PdfBaseElement]:
                 
                 text = page_textbetween.extract_text()
                 if(text):
-                    PdfData.append(PdfTextElement(text))
+                    PdfData.append(PdfTextElement(text, page.page_number))
     return PdfData
 
 
@@ -137,16 +143,16 @@ class PDFElementCombiner(BaseDocumentTransformer, ABC):
         for doc in documents:
             
             if doc.metadata["type"] == "PdfSectionElement":
-                doc.metadata["title"] = doc.page_content
+                doc.metadata["section"] = doc.page_content.strip()
                 lastSection = doc
 
             if lastSection != None:
-                doc.metadata["section"]= lastSection.metadata["title"]
+                doc.metadata["section"]= lastSection.metadata["section"]
 
             if len(result) > 0:
                 last : Document = result[-1]
                 if doc.metadata["type"] != "PdfSectionElement" and last.metadata["type"] == "PdfSectionElement":
-                    last.page_content += "\n" + doc.page_content
+                    last.page_content = (last.page_content + "\n" + doc.page_content).strip()
                 else: 
                     result.append(doc)
                     
@@ -222,13 +228,14 @@ class PDFCustomParser(BaseBlobParser):
             
             for ele in data:
 
-                def getDoc(text, blob, type):
+                def getDoc(text, blob, type, page):
                     return Document(
                         page_content= text,
                         metadata=dict(
                             {
                                 "source": blob.source,
-                                "type" : type
+                                "type" : type,
+                                "page" : page
                             }
                         ),
                     )
@@ -242,22 +249,22 @@ class PDFCustomParser(BaseBlobParser):
                         for row in jsonData:
                             rowyaml = yaml.dump(row,allow_unicode=True)
                             rowjson = json.dumps(row,indent=4,separators=(',', ': '))
-                            yield getDoc(rowyaml, blob, "PdfTableElementRow")
+                            yield getDoc(rowyaml, blob, "PdfTableElementRow", ele.page)
                     else:
                         #1. convert to df
                         df = pd.DataFrame(table_data[1:], columns=table_data[0])
                         text = df.to_html()
-                        yield getDoc(text, blob, ele.__class__.__name__)
+                        yield getDoc(text, blob, ele.__class__.__name__, ele.page)
                         #text = df.to_json()
                         #text = df.to_markdown()
                 else:
-                    yield getDoc(ele.text, blob, ele.__class__.__name__)
+                    yield getDoc(ele.text, blob, ele.__class__.__name__, ele.page)
                 
 
 if __name__ == "__main__":
-    #path = "data/PVO_2023_V5.pdf"
-    path = "data/pdfs/Curriculum-B_Inf.pdf"
-    #path = "data/Master_Informatik.pdf"
+    path = "data/pdfs/PVO_2023_V5.pdf"
+    #path = "data/pdfs/Curriculum-B_Inf.pdf"
+    #path = "data/pdfs/CMaster_Informatik.pdf"
     # data = parsePdf(path)
     # for entry in data:
     #     print(entry)
