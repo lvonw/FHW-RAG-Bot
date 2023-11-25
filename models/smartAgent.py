@@ -1,6 +1,9 @@
 import constants
+import os
 
-from base                               import ModelBase, get_loader, get_retriever
+from base                               import (ModelBase, 
+                                                get_loader, 
+                                                get_retriever)
 from langchain.agents.agent             import AgentExecutor
 from langchain.schema.vectorstore       import  VectorStoreRetriever
 from langchain.schema.runnable          import RunnableLambda
@@ -46,11 +49,12 @@ def get_custom_retriever(retriever : VectorStoreRetriever):
         return res
     
     prompt = ChatPromptTemplate.from_messages([
-        ("system",  constants.SMART_AGENT_PROMPT),
+        ("system",  constants.SMART_AGENT_P),
         ("human",   "{input}"),
         MessagesPlaceholder(variable_name="agent_scratchpad")])
 
     tools           = [more, search]
+    #tools           = [search]
     tool_funs       = [format_tool_to_openai_function(t) for t in tools]
     llm_with_tools  = constants.LLM.bind(functions = tool_funs)
 
@@ -66,7 +70,7 @@ def get_custom_retriever(retriever : VectorStoreRetriever):
         | OpenAIFunctionsAgentOutputParser()
     )
 
-    agent = AgentExecutor(agent=agent, tools=tools, verbose=True)
+    agent = AgentExecutor(agent=agent, tools=tools, verbose=constants.USE_VERBOSE)
     return RunnableLambda(lambda x: {"input" : x}) | agent
 
 def retriever_call(r : VectorStoreRetriever, q, k) -> List[Document]:
@@ -76,7 +80,27 @@ def compute_token_amount(doc : str):
     return (len(doc) / 4) 
 
 def get_docs_content(doc : Document) -> str:
-    return doc.page_content
+    metadata = get_formatted_metadata(doc)
+    content = doc.page_content
+    return metadata + content
+
+def get_formatted_metadata(doc : Document) -> str:
+    res = ""
+    metadata = doc.metadata
+    source = metadata["source"]
+
+    filename = os.path.basename(source)
+    title, _ = os.path.splitext(filename)
+
+    res += f"In dem Dokument {title} befinden sich"
+    
+    if "page" in metadata:
+        page = metadata["page"]
+        res += f", auf der Seite {page},"
+
+    res += " die folgenden Informationen: \n"
+    return res
+
 
 def get_dynamic_doc_amount(docs : List[Document], startIdx) -> str:
     length = 0 
@@ -88,9 +112,10 @@ def get_dynamic_doc_amount(docs : List[Document], startIdx) -> str:
                 < constants.MAX_TOKENS)):   
         
         result += get_docs_content(docs[idx])
+        length = compute_token_amount(result)
         idx += 1
 
-    if (result == ""):
+    if (not length):
         return ("No more documents could be loaded " +  
                 str(idx)), idx
     

@@ -54,18 +54,33 @@ Textabschnitt nicht die gewünschte Antwort liefert, verwende die More-Funktion,
 um weitere Texte zu finden.
 """
 
-SMART_AGENT_PROMPT  = """
+SMART_AGENT_P  = """
 Verwende die Search-Funktion, um Textabschnitte zu finde, die die Frage 
-beantworten könnten. Benutze die More funktion NUR dann wenn 
-die Informationen aus Search nicht reichen um die
-Frage ausreichend gut zu beantworten, um weitere Informationen zu finden.
+beantworten könnten. 
+Benutze die More funktion NUR IM ÄUßERSTEN NOTFALL, um weitere Informationen zu 
+finden.
+Dies ist dann der Fall, wenn die Informationen aus Search nicht reichen um die
+Frage zu beantworten.
 Verwende zur beantwortung ausschließlich die, aus diesen Funktionen gewonnenen 
 informationen. 
 Bevor du antwortest, hohle einmal tief luft, entspanne dich und
-denke Schritt für Schritt.
+denke Schritt für Schritt. 
+Gib bei deiner Antwort das Dokument und die Seite aus, auf welche
+du dich beziehst.
 """
 
-MAX_TOKENS      = 3900
+SMART_AGENT_P_NM  = """
+Verwende die Search-Funktion, um Textabschnitte zu finde, die die Frage 
+beantworten könnten. 
+Verwende zur beantwortung ausschließlich die, aus diesen Funktionen gewonnenen 
+informationen. 
+Bevor du antwortest, hohle einmal tief luft, entspanne dich und
+denke Schritt für Schritt. 
+Gib bei deiner Antwort das Dokument und die Seite aus, auf welche
+du dich beziehst.
+"""
+
+MAX_TOKENS      = 10000
 
 # ========== DATABASE ==========
 class LoaderMethod(enum.Enum):
@@ -88,7 +103,8 @@ class ModelMethod(enum.Enum):
 #DEFAULT_MODEL = ModelMethod.VECSTORE
 DEFAULT_MODEL  = ModelMethod.SMART_AGENT
 
-DEFAULT_DOC_AMOUNT = 10 
+DEFAULT_DOC_AMOUNT  = 10
+USE_VERBOSE         = True
 
 # ========== USAGE ==========
 USAGE_PROGRAM_NAME  = "FHDocsBot"
