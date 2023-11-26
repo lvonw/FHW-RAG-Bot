@@ -37,7 +37,7 @@ export default {
             this.waiting = true;
             this.exception = "";
             try {
-                const response = await fetch("http://localhost:5000/chat", {
+                const response = await fetch(window.location.origin + "/chat", {
                     method: 'POST',
                     headers: {
                         'Accept': 'application/json',
@@ -85,7 +85,7 @@ export default {
             const snippet = new HTTPSnippet({method: 'POST',postData: {
                 mimeType:"",
                 text : json
-            }, url: 'http://localhost:5000/chat', httpVersion:"", cookies:[], headers:[], queryString:[], headersSize:-1, bodySize:-1} );
+            }, url: window.location.origin + '/chat', httpVersion:"", cookies:[], headers:[], queryString:[], headersSize:-1, bodySize:-1} );
 
             const options = { indent: '\t' };
             const output = snippet.convert(this.tab, undefined, options);
