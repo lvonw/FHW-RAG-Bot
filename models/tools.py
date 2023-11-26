@@ -42,7 +42,7 @@ class Model(ModelBase):
     def init(self, mode, init):
         self.tools = get_Tools(mode, init)
 
-    def getModel(self):
+    def getModel(self,validation_file):
         return getModel(self.tools)
         
     

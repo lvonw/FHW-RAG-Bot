@@ -99,7 +99,7 @@ def invoke_chain(args) -> str:
         with open(val_path, "w", encoding="utf-8") as file:
             file.write("<span style=\"white-space: pre\">")#show new line in html!
             
-            info = f"model: {args.model}\ndatabase:{args.database}chatGpt:{args.gpt}\n"
+            info = f"model: {args.model}\ndatabase:{args.database}\nchatGpt:{args.gpt}\n"
             file.write(f"<font color=\"blue\">Params:\n{info}</font>\n")
             
             for question in validation:
@@ -107,22 +107,17 @@ def invoke_chain(args) -> str:
                 output += colors.fg.blue + "Frage: " + question
                 file.write(f"<font color=\"blue\">Frage: {question}</font>\n")
 
-                if hasattr(model, 'retriever'):
-                    retr = models.vecStore.format_docs(model.retriever.invoke(question))
-                    file.write(f"<font color=\"red\">{retr}</font>\n")
-                    output += colors.fg.red + retr
-
-                chain = model.getModel()
+                chain = model.getModel(file)
                 answer = get_answer(chain.invoke(question))
-                output += colors.fg.green + "Antwort: " + answer
+                output += "\n" + colors.fg.green + "Antwort: " + answer
                 file.write(f"<font color=\"green\">Antwort: {answer}</font>\n")
                 output += "============="
             file.write("</span>")#show new line in html!
-        return 
+        return output
     
     if not model:
         return
-    chain = model.getModel()
+    chain = model.getModel(None)
 
     # Handle the question answering
     if args.question or args.cli:
@@ -140,7 +135,7 @@ def invoke_chain(args) -> str:
             else:
                 output += "Das Model " + modelType + "besitzt keinen Retriever!"
         else:
-            output += (colors.bg.green 
+            output += (colors.fg.green 
                   + "Antwort: " + 
                   get_answer(chain.invoke(user_input)))
             

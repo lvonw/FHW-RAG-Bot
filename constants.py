@@ -82,7 +82,7 @@ Gib bei deiner Antwort das Dokument und die Seite aus, auf welche
 du dich beziehst.
 """
 
-MAX_TOKENS = 10000
+MAX_TOKENS = 2000
 
 
 # ========== DATABASE ==========

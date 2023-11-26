@@ -1,3 +1,4 @@
+from io import TextIOWrapper
 import os
 from typing import Callable, List
 
@@ -25,7 +26,7 @@ class ModelBase(ABC):
         pass
 
     @abstractmethod
-    def getModel(self):
+    def getModel(self, validation_file : TextIOWrapper | None):
         pass
 class colors:
     '''Colors class:reset all colors with colors.reset; two
@@ -129,5 +130,12 @@ def get_retrieverTool(name, init_func  : Callable[[], List[Document] ], mode=con
     return Tool(
             name=name,
             func=docstore.run,
-            description=description,
-        )
+            description=description
+            )
+
+def write_validation_color(file, text, color):
+    if file is not None:
+        file.write(f"<font color=\"{color}\">{text}</font>\n")
+
+def write_validation_retriever(file, text):
+    write_validation_color(file, text, "red")

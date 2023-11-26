@@ -1,4 +1,5 @@
-from base import ModelBase, get_loader, get_retriever, get_retrieverTool
+from io import TextIOWrapper
+from base import ModelBase, get_loader, get_retriever, get_retrieverTool, write_validation_retriever
 import constants
 
 from langchain.agents.agent import AgentExecutor
@@ -19,7 +20,7 @@ class customRetrieverQA:
         self.retriever = retriever
         self.k = 1   
 
-def get_custom_retriever(retriever : VectorStoreRetriever):
+def get_custom_retriever(retriever : VectorStoreRetriever,validation_file):
     k = 1
     last_search = None
 
@@ -35,7 +36,7 @@ def get_custom_retriever(retriever : VectorStoreRetriever):
 
         k = 1   
         last_sarch = query
-        return retriever_call(retriever, query, k)
+        return retriever_call(retriever, query, k, validation_file)
 
     @tool
     def more() -> str:
@@ -52,7 +53,7 @@ def get_custom_retriever(retriever : VectorStoreRetriever):
            raise Exception("more than 5 documents can not be searched")
         
         if last_search != None:
-            return retriever_call(retriever, last_search, k)
+            return retriever_call(retriever, last_search, k, validation_file)
         else:
             return "You need to first search for a text to request more"
     
@@ -77,12 +78,15 @@ def get_custom_retriever(retriever : VectorStoreRetriever):
         | OpenAIFunctionsAgentOutputParser()
     )
 
-    agent = AgentExecutor(agent=agent, tools=tools, verbose=True)
+    agent = AgentExecutor(agent=agent, tools=tools)
     return RunnableLambda(lambda x: {"input" : x}) | agent 
 
 
-def retriever_call(retriever, query, k):
-    return retriever.get_relevant_documents(query, search_kwargs = {'k': k})[k-1]
+def retriever_call(retriever, query, k,validation_file):
+    doc = retriever.get_relevant_documents(query, search_kwargs = {'k': k})[k-1]
+    text = "metadata:" + str(doc.metadata) + "\ncontent:\n" + doc.page_content
+    write_validation_retriever(validation_file, text)
+    return text
 
 
 
@@ -90,10 +94,10 @@ class Model(ModelBase):
     def init(self, mode, init):   
         def loader(mode):
             return get_loader(mode, "**/*.pdf").load_and_split(constants.SPLITTER) 
-        self.retriever = get_retriever("Curr", loader, mode, init)
+        self.retriever = get_retriever("retriever", loader, mode, init)
 
-    def getModel(self):
-        return get_custom_retriever(self.retriever)
+    def getModel(self,validation_file : TextIOWrapper | None):
+        return get_custom_retriever(self.retriever, validation_file)
         # return customRetrieverQA(self.retriever).getModel()
     
     

@@ -1,9 +1,10 @@
+from io import TextIOWrapper
 import constants
 import os
 
 from base                               import (ModelBase, 
                                                 get_loader, 
-                                                get_retriever)
+                                                get_retriever, write_validation_color, write_validation_retriever)
 from langchain.agents.agent             import AgentExecutor
 from langchain.schema.vectorstore       import  VectorStoreRetriever
 from langchain.schema.runnable          import RunnableLambda
@@ -18,7 +19,7 @@ from typing                             import List
 from langchain.schema.document          import Document
 
 
-def get_custom_retriever(retriever : VectorStoreRetriever):
+def get_custom_retriever(retriever : VectorStoreRetriever,validation_file : TextIOWrapper | None ):
     docs = None 
     idx = 0
 
@@ -33,7 +34,7 @@ def get_custom_retriever(retriever : VectorStoreRetriever):
         nonlocal idx
         # Init the documents
         docs = retriever_call(retriever, query, constants.DEFAULT_DOC_AMOUNT)
-        res, idx = get_dynamic_doc_amount(docs, idx)
+        res, idx = get_dynamic_doc_amount(docs, idx, validation_file)
         return res
 
     @tool
@@ -45,7 +46,7 @@ def get_custom_retriever(retriever : VectorStoreRetriever):
         nonlocal docs
         nonlocal idx
         
-        res, idx = get_dynamic_doc_amount(docs, idx)
+        res, idx = get_dynamic_doc_amount(docs, idx, validation_file)
         return res
     
     prompt = ChatPromptTemplate.from_messages([
@@ -102,7 +103,7 @@ def get_formatted_metadata(doc : Document) -> str:
     return res
 
 
-def get_dynamic_doc_amount(docs : List[Document], startIdx) -> str:
+def get_dynamic_doc_amount(docs : List[Document], startIdx, validation_file) -> str:
     length = 0 
     idx = startIdx
     result = ""
@@ -111,7 +112,7 @@ def get_dynamic_doc_amount(docs : List[Document], startIdx) -> str:
             and (length + compute_token_amount(get_docs_content(docs[idx])) 
                 < constants.MAX_TOKENS)):   
         
-        result += get_docs_content(docs[idx])
+        result += ("" if result == "" else "\n\n") + get_docs_content(docs[idx])
         length = compute_token_amount(result)
         idx += 1
 
@@ -119,6 +120,9 @@ def get_dynamic_doc_amount(docs : List[Document], startIdx) -> str:
         return ("No more documents could be loaded " +  
                 str(idx)), idx
     
+    write_validation_color(validation_file, "Tokens:" + str(length), "")
+    write_validation_retriever(validation_file, result)
+
     return result, idx
     
 
@@ -134,8 +138,8 @@ class Model(ModelBase):
                                        init, 
                                        constants.DEFAULT_DOC_AMOUNT)
 
-    def getModel(self):
-        return get_custom_retriever(self.retriever)
+    def getModel(self,validation_file : TextIOWrapper | None):
+        return get_custom_retriever(self.retriever, validation_file)
     
     
         
