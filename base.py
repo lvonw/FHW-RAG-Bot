@@ -17,6 +17,7 @@ from langchain.schema.runnable.base import Runnable
 from langchain.agents import Tool
 from langchain.chains import RetrievalQA
 from langchain.document_loaders import DirectoryLoader
+import shutil
 
 class ModelBase(ABC):
     @abstractmethod
@@ -106,9 +107,12 @@ def get_path(mode, name):
 def get_retriever(name, init_func  : Callable[[], List[Document] ], mode=constants.DEFAULT_DATABASE, init=False, k = 1):
     db = None
     path = get_path(mode, name)
+
     if not os.path.isdir(path):
         init = True
     if init:
+        if os.path.isdir(path):
+            shutil.rmtree(path)
         docs = init_func(mode)
         db = init_and_persist_chroma(docs, path)
     else:
