@@ -49,7 +49,7 @@ def query():
         #Read json
         args = constants.DefaultArgs
         if 'prompt' in data:
-            args.question = data['prompt']
+            args.question = [data['prompt']]
         if 'database' in data:
             EnumAction(type=constants.LoaderMethod, option_strings="", dest="database")(None, args,values=[data['database']])
         if 'model' in data:
