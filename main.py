@@ -59,6 +59,9 @@ def main():
 
 def invoke_chain(args) -> str:
     output:str = ""
+
+    constants.setLLM(args.gpt)
+
     modelType : constants.ModelMethod = args.model
 
     match modelType:
@@ -91,9 +94,12 @@ def invoke_chain(args) -> str:
 
     
     if args.validate:
-        with open(f"validation{args.model}_{args.database}.html", "w", encoding="utf-8") as file:
+        val_path =  f"validation/validation{args.model}_{args.database}.html"
+        os.makedirs(os.path.dirname(val_path), exist_ok=True)
+        with open(val_path, "w", encoding="utf-8") as file:
             file.write("<span style=\"white-space: pre\">")#show new line in html!
-            info = f"model: {args.model}\ndatabase:{args.database}"
+            
+            info = f"model: {args.model}\ndatabase:{args.database}chatGpt:{args.gpt}\n"
             file.write(f"<font color=\"blue\">Params:\n{info}</font>\n")
             
             for question in validation:

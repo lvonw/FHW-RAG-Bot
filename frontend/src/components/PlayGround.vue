@@ -28,7 +28,7 @@ export default {
                 "prompt": this.prompt === '' ? undefined : this.prompt,
                 "database": this.database === '' ? undefined : this.database,
                 "model": this.model === '' ? undefined : this.model,
-                "gptVersion": this.gptVersion === '' ? undefined : this.gptVersion,
+                "gpt": this.gptVersion === '' ? undefined : this.gptVersion,
                 "init": this.init === false ? undefined : this.init,
                 "validate": this.validate === false ? undefined : this.validate,
             }
@@ -76,7 +76,7 @@ export default {
                 "prompt": this.prompt === '' ? undefined : this.prompt,
                 "database": this.database === '' ? undefined : this.database,
                 "model": this.model === '' ? undefined : this.model,
-                "gptVersion": this.gptVersion === '' ? undefined : this.gptVersion,
+                "gpt": this.gptVersion === '' ? undefined : this.gptVersion,
                 "init": this.init === false ? undefined : this.init,
                 "validate": this.validate === false ? undefined : this.validate,
             }

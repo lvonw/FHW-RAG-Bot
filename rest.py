@@ -60,6 +60,8 @@ def query():
             args.init = data['validate']
         if 'cv' in data:
             args.cv = data['cv']
+        if 'gpt' in data:
+            args.gpt = data['gpt']
         
         #Invoke chain
         result = main.invoke_chain(args)
