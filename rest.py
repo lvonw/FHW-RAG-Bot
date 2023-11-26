@@ -1,10 +1,29 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory, redirect
+#from flask_cors import CORS
 
 import constants
 import main
+from parsing import EnumAction
 
 app = Flask(__name__)
 
+#Cors Einstellung wird für den Frontend Developer-Server benötigt
+#cors = CORS(app, resources={r"/chat": {"origins": "*"}})
+#app.config['CORS_HEADERS'] = 'Content-Type'
+
+@app.route("/", methods=["GET"])
+def redirect_internal():
+    return redirect("/docs/", code=302)
+
+
+@app.route('/docs/')
+def index():
+  return send_from_directory("docs" , 'index.html')
+
+@app.route('/docs/<path:path>')
+def send_docs(path):
+    return send_from_directory('docs', path)
+    
 @app.route('/chat', methods=['POST'])
 def query():
 
@@ -32,9 +51,9 @@ def query():
         if 'prompt' in data:
             args.question = data['prompt']
         if 'database' in data:
-            args.database = data['database']
+            EnumAction(type=constants.LoaderMethod, option_strings="", dest="database")(None, args,values=[data['database']])
         if 'model' in data:
-            args.model = data['model']
+            EnumAction(type=constants.ModelMethod, option_strings="", dest="model")(None, args, values=[data['model']])
         if 'init' in data:
             args.init = data['init']
         if 'validate' in data:

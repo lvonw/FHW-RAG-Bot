@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   version="1.1"
+   id="svg2"
+   width="64"
+   height="64.893333"
+   viewBox="0 0 64 64.893333"
+   sodipodi:docname="fh_kreis_groesse_eps8.eps"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs6" />
+  <sodipodi:namedview
+     id="namedview4"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1" />
+  <g
+     id="g8"
+     inkscape:groupmode="layer"
+     inkscape:label="ink_ext_XXXXXX"
+     transform="matrix(1.3333333,0,0,-1.3333333,0,64.893333)">
+    <g
+       id="g10"
+       transform="scale(0.1)">
+      <path
+         d="M 480,0 H 0 V 486.668 H 480 V 0"
+         style="fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none"
+         id="path12" />
+      <path
+         d="m 312.188,358.867 29.824,-72.109 h -27.227 l -28.437,71.426 -0.215,0.566 H 285.52 118.262 l 87.949,-219.727 c 1.953,-5.359 3.769,-9.48 7.871,-9.48 3.828,0.211 5.352,3.004 5.352,3.004 l 28.847,70.137 0.137,0.332 -0.137,0.332 -25.742,63.683 h 17.813 l -7.657,19.727 h -17.968 l -19.368,48.203 h 25.227 l 82.656,-196.258 c 1.953,-4.992 4.063,-9.484 8.242,-9.484 4.102,0 5.977,4.113 7.969,9.5 l 28.711,65.07 0.117,0.313 -0.117,0.332 -25.254,62.597 h 27.442 l 11.074,-28.125 0.82,-2.238 0.813,2.238 48.484,120.09 -99.355,-0.129"
+         style="fill:#22326e;fill-opacity:1;fill-rule:nonzero;stroke:none"
+         id="path14" />
+      <path
+         d="m 263.203,83.0547 c -48.723,0 -94.531,18.9763 -128.973,53.4183 -34.4566,34.453 -53.4292,80.265 -53.4292,128.988 0,48.719 18.9726,94.531 53.4182,128.973 34.453,34.453 80.261,53.425 128.984,53.425 100.586,0 182.422,-81.824 182.422,-182.398 0,-100.578 -81.836,-182.4063 -182.422,-182.4063 z m 0,379.8043 c -52.734,0 -102.305,-20.535 -139.59,-57.82 -37.2849,-37.277 -57.8122,-86.855 -57.8122,-139.578 0,-52.738 20.5273,-102.309 57.8122,-139.59 37.285,-37.2851 86.856,-57.8163 139.59,-57.8163 52.735,0 102.305,20.5312 139.59,57.8163 37.285,37.281 57.832,86.852 57.832,139.59 0,108.844 -88.574,197.398 -197.422,197.398"
+         style="fill:#22326e;fill-opacity:1;fill-rule:nonzero;stroke:none"
+         id="path16" />
+    </g>
+  </g>
+</svg>

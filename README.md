@@ -32,3 +32,6 @@ If you added a new dependency you can compile a new list using
 ```
 conda list --export > ./requirements.txt
 ```
+
+### GUI
+If you start the rest.py server, you can interact with the FhWedelChatBot at http://localhost:5000.
