@@ -36,6 +36,7 @@ export default {
             console.log(json);
             this.waiting = true;
             this.exception = "";
+            this.result = "";
             try {
                 const response = await fetch(window.location.origin + "/chat", {
                     method: 'POST',

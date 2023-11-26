@@ -1,4 +1,6 @@
 from flask import Flask, request, jsonify, send_from_directory, redirect
+from langchain.globals import set_verbose
+set_verbose(True)
 #from flask_cors import CORS
 
 import constants
@@ -34,7 +36,7 @@ def query():
         if 'prompt' in data and data['prompt'] == "":
             return jsonify({'error': 'Empty prompt'}), 400
         
-        if 'prompt' not in data and ('init' not in data or 'init' in data and not data['init']):
+        if 'prompt' not in data and ('init' not in data or 'init' in data and not data['init']) and ('validate' not in data or 'validate' in data and not data['validate']):
             return jsonify({'error': 'Missing "prompt" element in request body'}), 400
 
         if 'prompt' in data and 'init' in data and data['init']:
@@ -57,7 +59,7 @@ def query():
         if 'init' in data:
             args.init = data['init']
         if 'validate' in data:
-            args.init = data['validate']
+            args.validate = data['validate']
         if 'cv' in data:
             args.cv = data['cv']
         if 'gpt' in data:

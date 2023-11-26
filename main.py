@@ -2,8 +2,9 @@
 from ctypes import ArgumentError
 from traitlets import default
 from langchain.globals import set_verbose
-from base import colors, get_loader, get_retriever
 set_verbose(True)
+from base import Logger, colors, get_loader, get_retriever
+
 import os
 os.system('color')
 
@@ -53,15 +54,14 @@ def main():
         parser.print_help()
         return
     
-
-    print(invoke_chain(args))
+    invoke_chain(args)
 
 
 def invoke_chain(args) -> str:
-    output:str = ""
+
+    log = Logger()
 
     constants.setLLM(args.gpt)
-
     modelType : constants.ModelMethod = args.model
 
     match modelType:
@@ -76,7 +76,7 @@ def invoke_chain(args) -> str:
         case constants.ModelMethod.OpenAI_ASSISTANT:
             model = models.assistantApi.Model()
         case _: 
-            return output + "Model type unknown"
+            return log.log_red("Model type unknown").output
 
 
     #test Docs:
@@ -97,23 +97,22 @@ def invoke_chain(args) -> str:
         val_path =  f"validation/validation{args.model}_{args.database}.html"
         os.makedirs(os.path.dirname(val_path), exist_ok=True)
         with open(val_path, "w", encoding="utf-8") as file:
+            log.set_validation_file(file)
             file.write("<span style=\"white-space: pre\">")#show new line in html!
             
-            info = f"model: {args.model}\ndatabase:{args.database}\nchatGpt:{args.gpt}\n"
-            file.write(f"<font color=\"blue\">Params:\n{info}</font>\n")
+            info = f"Params:\nmodel: {args.model}\ndatabase:{args.database}\nchatGpt:{args.gpt}\n"
+            log.log_black(info)
             
             for question in validation:
-
-                output += colors.fg.blue + "Frage: " + question
-                file.write(f"<font color=\"blue\">Frage: {question}</font>\n")
+                log.log_blue( "Frage: " + question)
 
                 chain = model.getModel(file)
                 answer = get_answer(chain.invoke(question))
-                output += "\n" + colors.fg.green + "Antwort: " + answer
-                file.write(f"<font color=\"green\">Antwort: {answer}</font>\n")
-                output += "============="
+
+                log.log_green("Antwort: " + answer)
+                log.log_black("=============")
             file.write("</span>")#show new line in html!
-        return output
+        return log.output
     
     if not model:
         return
@@ -131,15 +130,13 @@ def invoke_chain(args) -> str:
         # Answer the question or show the relevant vectors
         if args.cv:
             if hasattr(model, 'retriever'):
-                output += models.vecStore.format_docs(model.retriever.invoke(user_input))
+                log.log_black(models.vecStore.format_docs(model.retriever.invoke(user_input)))
             else:
-                output += "Das Model " + modelType + "besitzt keinen Retriever!"
+                log.log_red("Das Model " + modelType + "besitzt keinen Retriever!")
         else:
-            output += (colors.fg.green 
-                  + "Antwort: " + 
-                  get_answer(chain.invoke(user_input)))
-            
-    return output
+            log.log_green("Antwort: " + get_answer(chain.invoke(user_input)))
+          
+    return log.output
 
 
 if __name__ == "__main__":

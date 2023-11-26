@@ -8,7 +8,7 @@ def get_Tools(mode=constants.DEFAULT_DATABASE, init=False):
 
     def loader1(mode):
         return get_loader(mode, "**/*_V*.pdf").load_and_split(constants.SPLITTER)
-    tool1 = get_retrieverTool("Prüfungsverordnung", loader1, mode, init)
+    tool1 = get_retrieverTool("PVO", loader1, mode, init, "Prüfungsverordnung")
 
     def loader2(mode):
         return get_loader(mode, "**/Master*.pdf").load_and_split(constants.SPLITTER)
@@ -18,8 +18,8 @@ def get_Tools(mode=constants.DEFAULT_DATABASE, init=False):
         return get_loader(mode, "**/Curr*.pdf").load_and_split(constants.SPLITTER)
     tool3 = get_retrieverTool("Studiensverlauf", loader3, mode, init, "Studienverlaufs- und Prüfungsplan Informatik (B.Sc.)")
 
-    return [tool2]
-    #return [tool1, tool2, tool3]
+    #return [tool2]
+    return [tool1, tool2, tool3]
 
 
 def getModel(tools):

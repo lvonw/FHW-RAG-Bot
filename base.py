@@ -70,6 +70,27 @@ class colors:
         cyan = '\033[46m'
         lightgrey = '\033[47m'
 
+class Logger:
+    def __init__(self) -> None:
+        self.output = ""
+
+    def set_validation_file(self,validation_file):
+        self.validation_file = validation_file
+    def log(self, text, color, color_validation) -> 'Logger':
+        self.output += text + "\n"
+        print(color + text)
+        write_validation_color(self.validation_file, text, color_validation)
+        return self
+    def log_red(self, text)  -> 'Logger':
+        return self.log(text, colors.fg.red, "red")
+    def log_green(self, text)  -> 'Logger':
+        return self.log(text, colors.fg.green, "green")
+    def log_black(self, text)  -> 'Logger':
+        return self.log(text, colors.fg.black, "black")
+    def log_blue(self, text)  -> 'Logger':
+        return self.log(text, colors.fg.blue, "blue")
+            
+
 
 #from langchain.embeddings import AlephAlphaAsymmetricSemanticEmbedding
 #from langchain.embeddings import AlephAlphaSymmetricSemanticEmbedding
