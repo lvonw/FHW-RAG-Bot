@@ -253,7 +253,7 @@ class PDFCustomParser(BaseBlobParser):
                     else:
                         #1. convert to df
                         df = pd.DataFrame(table_data[1:], columns=table_data[0])
-                        text = df.to_html()
+                        text = df.to_markdown()
                         yield getDoc(text, blob, ele.__class__.__name__, ele.page)
                         #text = df.to_json()
                         #text = df.to_markdown()
@@ -262,6 +262,7 @@ class PDFCustomParser(BaseBlobParser):
                 
 
 if __name__ == "__main__":
+    path = "data/pdfs/PVO_2023_V5.pdf"
     path = "data/pdfs/PVO_2023_V5.pdf"
     #path = "data/pdfs/Curriculum-B_Inf.pdf"
     #path = "data/pdfs/CMaster_Informatik.pdf"

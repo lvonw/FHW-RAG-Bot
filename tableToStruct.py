@@ -69,10 +69,23 @@ def ConvertTable(rows: List[List[str | None]]):
                 except ValueError:
                   pass
 
+   
+    startIndex = 0
+
+    # 4. Seperate the First Row if it is the whole row
+    for row in range(headerIndex):
+        row = rows[rowi]
+        diff = 0
+        for ci in range(len(row) - 1):
+            if row[ci] != row[ci + 1]:
+                diff += 1
+        if diff <= 1:
+            startIndex += 1
+        else:
+            break
+    
     #### Create Json:
     data = []
-
-    startIndex = 1
 
     for row in rows[headerIndex:]:
         obj = {}
