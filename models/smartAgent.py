@@ -22,7 +22,7 @@ from langchain.schema.document          import Document
 def get_custom_retriever(retriever : VectorStoreRetriever,validation_file : TextIOWrapper | None ):
     docs = None 
     idx = 0
-
+    counter = 0
     @tool
     def search(query : str) -> str:
         """Gets documents with similar content
@@ -32,6 +32,15 @@ def get_custom_retriever(retriever : VectorStoreRetriever,validation_file : Text
         """
         nonlocal docs
         nonlocal idx
+        nonlocal counter
+        idx = 0
+        counter += 1
+        write_validation_color(validation_file, "Query:" + query, "")
+
+        if counter > constants.MAX_ITERATIONS:
+            write_validation_color(validation_file, "End of Query", "")
+            return "Es gibt keine weiteren Daten. Gib jetzt das beste Ergebnis aus, das du hast."
+
         # Init the documents
         docs = retriever_call(retriever, query, constants.DEFAULT_DOC_AMOUNT)
         res, idx = get_dynamic_doc_amount(docs, idx, validation_file)
@@ -45,7 +54,13 @@ def get_custom_retriever(retriever : VectorStoreRetriever,validation_file : Text
         """
         nonlocal docs
         nonlocal idx
-        
+        nonlocal counter
+        counter += 1
+
+        if counter > constants.MAX_ITERATIONS:
+            write_validation_color(validation_file, "End of Query", "")
+            return "Es gibt keine weiteren Daten. Gib jetzt das beste Ergebnis aus, das du hast."
+
         res, idx = get_dynamic_doc_amount(docs, idx, validation_file)
         return res
     
@@ -109,14 +124,14 @@ def get_dynamic_doc_amount(docs : List[Document], startIdx, validation_file) -> 
     result = ""
 
     while ((idx < len(docs))
-            and (length + compute_token_amount(get_docs_content(docs[idx])) 
-                < constants.MAX_TOKENS)):   
+            and ((length + compute_token_amount(get_docs_content(docs[idx])) < constants.MAX_TOKENS) or not length)):   
         
         result += ("" if result == "" else "\n\n") + get_docs_content(docs[idx])
         length = compute_token_amount(result)
         idx += 1
 
     if (not length):
+        write_validation_color(validation_file, "Tokens:" + str(length), "red")
         return ("No more documents could be loaded " +  str(idx)), idx
     
     write_validation_color(validation_file, "Tokens:" + str(length), "")

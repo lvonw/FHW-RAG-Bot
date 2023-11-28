@@ -1,5 +1,6 @@
 
 from ctypes import ArgumentError
+import time
 from langchain.globals import set_verbose
 set_verbose(True)
 from base import Logger, colors, get_loader, get_retriever
@@ -34,7 +35,7 @@ def get_user_input():
 
 validation = [
 "Wer unterrichtet Fach Moderne Software Architekturen?", 
-"Wie viele ECTS darf man noch offen haben um eine Bachelorthesis anzufangen?",
+"Wie viele Leistungspunkte darf man noch offen haben um eine Bachelorthesis anzufangen?",
 "Was kannst du übers Auslandssemster sagen?",
 "Wie lautet die Modul Nr. von Programmstrukturen 1?",
 "Wie lange dauert die Klausur in Programmstrukturen 1?",
@@ -93,7 +94,7 @@ def invoke_chain(args) -> str:
 
     
     if args.validate:
-        val_path =  f"validation/validation{args.model}_{args.database}.html"
+        val_path =  f"validation/validation{args.model}_{args.database}_{time.time()}.html"
         os.makedirs(os.path.dirname(val_path), exist_ok=True)
         with open(val_path, "w", encoding="utf-8") as file:
             log.set_validation_file(file)

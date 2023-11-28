@@ -46,7 +46,7 @@ def setLLM(model_name):
     )
 
 
-SPLITTER = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0, separator="(\\n\\n|\\.\\n)", is_separator_regex=True)
+SPLITTER = CharacterTextSplitter(chunk_size=200, chunk_overlap=0, separator="(\\n\\n|\\.\\n)", is_separator_regex=True)
 
 INPUT_PROMPT = "Wie kann ich Dir helfen?: "
 
@@ -76,7 +76,7 @@ Gib bei deiner Antwort das Dokument und die Seite aus, auf welche
 du dich beziehst.
 """
 
-MAX_TOKENS = 2500
+MAX_TOKENS = 1000
 
 
 # ========== DATABASE ==========
@@ -105,6 +105,7 @@ DEFAULT_MODEL = ModelMethod.SMART_AGENT
 
 DEFAULT_DOC_AMOUNT = 32
 USE_VERBOSE = True
+MAX_ITERATIONS = 6
 
 # ========== USAGE ==========
 USAGE_PROGRAM_NAME = "FHDocsBot"
