@@ -98,6 +98,7 @@ class Logger:
 
 def getEmbedding():
     embeddings = OpenAIEmbeddings(openai_api_key=constants.API_KEY)
+    return embeddings
 #embeddings = AlephAlphaAsymmetricSemanticEmbedding(normalize=True, compress_to_size=128)
 #embeddings = AlephAlphaSymmetricSemanticEmbedding(normalize=True, compress_to_size=128)
 #embeddings = TensorflowHubEmbeddings()
