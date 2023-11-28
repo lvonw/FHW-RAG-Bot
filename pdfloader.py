@@ -9,17 +9,19 @@ from langchain.document_loaders.base import BaseBlobParser, Document
 from langchain.document_loaders import Blob
 from langchain.schema import BaseDocumentTransformer
 from tqdm import tqdm
+from langchain.document_loaders import DirectoryLoader
+import constants
 
 from tableToStruct import ConvertTable
 
 def keep_bold_chars(obj):
     if obj['object_type'] == 'char':
-        return 'Bold' in obj['fontname'] and obj["size"] >= 12
+        return 'Bold' in obj['fontname'] and obj["size"] >= 11.999999999999943
     return True
 
 def keep_normal_chars(obj):
     if obj['object_type'] == 'char':
-        return not ('Bold' in obj['fontname'] and obj["size"] >= 12)
+        return not ('Bold' in obj['fontname'] and obj["size"] >= 11.999999999999943)
     return True
 
 class PdfBaseElement(ABC):
@@ -57,7 +59,6 @@ def parsePdf(path) -> List[PdfBaseElement]:
 
     with pdfplumber.open(path) as pdf:
         for page in tqdm(pdf.pages):
-           
             tables = page.find_tables(table_settings={})
 
             def withoutTable(obj):
@@ -120,7 +121,7 @@ def parsePdf(path) -> List[PdfBaseElement]:
                 page_textbetween = page_normal_text.filter(textBetween)
                 
                 text = page_textbetween.extract_text()
-                if(text):
+                if(text.strip()):
                     PdfData.append(PdfTextElement(text, page.page_number))
     return PdfData
 
@@ -262,18 +263,22 @@ class PDFCustomParser(BaseBlobParser):
                 
 
 if __name__ == "__main__":
-    path = "data/pdfs/PVO_2023_V5.pdf"
-    path = "data/pdfs/PVO_2023_V5.pdf"
+    #path = "data/pdfs/PVO_2023_V5.pdf"
+    path = "data/pdfs/ZLO_2021_V2.pdf"
+    
     #path = "data/pdfs/Curriculum-B_Inf.pdf"
     #path = "data/pdfs/CMaster_Informatik.pdf"
     # data = parsePdf(path)
     # for entry in data:
     #     print(entry)
 
-    loader = PDFCustomLoader(path)
-    docs = loader.load()
-    for entry in docs:
-        print(entry)
-
-
+    #loader = PDFCustomLoader(path)
+    #docs = loader.load()
+    #for entry in docs:
+    #    print(entry)
+    loader = DirectoryLoader(constants.PATH_PDF, glob="**/*.pdf", loader_cls=PDFCustomLoader, show_progress=True)
+    docs = loader.load_and_split(constants.SPLITTER)
+    docsSorted = sorted(docs, key=lambda c : len(c.page_content))
+    for entry in docsSorted:
+        print(len(entry.page_content))
 

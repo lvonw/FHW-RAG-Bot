@@ -28,6 +28,11 @@ command
 conda install requirements.txt
 ```
 
+Or install the following packages:
+```
+pip install flask langchain python-dotenv pdfplumber pandas tabulate tqdm openai chromadb
+```
+
 If you added a new dependency you can compile a new list using
 ```
 conda list --export > ./requirements.txt

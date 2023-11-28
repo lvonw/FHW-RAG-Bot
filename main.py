@@ -1,6 +1,5 @@
 
 from ctypes import ArgumentError
-from traitlets import default
 from langchain.globals import set_verbose
 set_verbose(True)
 from base import Logger, colors, get_loader, get_retriever

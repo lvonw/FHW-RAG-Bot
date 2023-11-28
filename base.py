@@ -96,19 +96,20 @@ class Logger:
 #from langchain.embeddings import AlephAlphaSymmetricSemanticEmbedding
 #from langchain.embeddings import TensorflowHubEmbeddings
 
-embeddings = OpenAIEmbeddings(openai_api_key=constants.API_KEY)
+def getEmbedding():
+    embeddings = OpenAIEmbeddings(openai_api_key=constants.API_KEY)
 #embeddings = AlephAlphaAsymmetricSemanticEmbedding(normalize=True, compress_to_size=128)
 #embeddings = AlephAlphaSymmetricSemanticEmbedding(normalize=True, compress_to_size=128)
 #embeddings = TensorflowHubEmbeddings()
 
 
 def init_and_persist_chroma(docs, path): 
-    db = Chroma.from_documents(docs, embeddings,persist_directory = path)
+    db = Chroma.from_documents(docs, getEmbedding(),persist_directory = path)
     return db
 
 def load_chroma(path):
     return Chroma(
-        embedding_function = embeddings,
+        embedding_function = getEmbedding(),
         persist_directory  = path) 
 
 def get_loader(mode, glob = "**/*.pdf"):

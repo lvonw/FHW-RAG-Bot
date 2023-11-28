@@ -46,7 +46,7 @@ def setLLM(model_name):
     )
 
 
-SPLITTER = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
+SPLITTER = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0, separator="(\\n\\n|\\.\\n)", is_separator_regex=True)
 
 INPUT_PROMPT = "Wie kann ich Dir helfen?: "
 
@@ -57,18 +57,12 @@ um weitere Texte zu finden.
 """
 
 SMART_AGENT_P = """
-Verwende die Search-Funktion, um Textabschnitte zu finde, die die Frage 
-beantworten könnten. 
-Benutze die More funktion NUR IM ÄUßERSTEN NOTFALL, um weitere Informationen zu 
-finden.
-Dies ist dann der Fall, wenn die Informationen aus Search nicht reichen um die
-Frage zu beantworten.
-Verwende zur beantwortung ausschließlich die, aus diesen Funktionen gewonnenen 
-informationen. 
-Bevor du antwortest, hohle einmal tief luft, entspanne dich und
-denke Schritt für Schritt. 
-Gib bei deiner Antwort das Dokument und die Seite aus, auf welche
-du dich beziehst.
+Verwende die Search-Funktion, um Textabschnitte zu finde, die die Frage beantworten könnten. 
+Benutze die More funktion, um weitere Informationen zu finden.
+Dies ist dann der Fall, wenn die Informationen aus Search nicht reichen um die Frage zu beantworten.
+Verwende zur beantwortung ausschließlich die, aus diesen Funktionen gewonnenen informationen. 
+Bevor du antwortest, hohle einmal tief luft, entspanne dich und denke Schritt für Schritt. 
+Gib bei deiner Antwort das Dokument und die Seite aus, auf welche du dich beziehst.
 """
 
 SMART_AGENT_P_NM = """
@@ -82,7 +76,7 @@ Gib bei deiner Antwort das Dokument und die Seite aus, auf welche
 du dich beziehst.
 """
 
-MAX_TOKENS = 2000
+MAX_TOKENS = 2500
 
 
 # ========== DATABASE ==========
@@ -109,7 +103,7 @@ class ModelMethod(enum.Enum):
 DEFAULT_MODEL = ModelMethod.SMART_AGENT
 
 
-DEFAULT_DOC_AMOUNT = 10
+DEFAULT_DOC_AMOUNT = 32
 USE_VERBOSE = True
 
 # ========== USAGE ==========

@@ -73,7 +73,7 @@ def ConvertTable(rows: List[List[str | None]]):
     startIndex = 0
 
     # 4. Seperate the First Row if it is the whole row
-    for row in range(headerIndex):
+    for rowi in range(headerIndex):
         row = rows[rowi]
         diff = 0
         for ci in range(len(row) - 1):

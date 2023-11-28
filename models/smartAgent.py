@@ -117,8 +117,7 @@ def get_dynamic_doc_amount(docs : List[Document], startIdx, validation_file) -> 
         idx += 1
 
     if (not length):
-        return ("No more documents could be loaded " +  
-                str(idx)), idx
+        return ("No more documents could be loaded " +  str(idx)), idx
     
     write_validation_color(validation_file, "Tokens:" + str(length), "")
     write_validation_retriever(validation_file, result)
