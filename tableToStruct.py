@@ -66,7 +66,7 @@ def ConvertTable(rows: List[List[str | None]]):
             if row[ci] is not None:
                 #remove duplicates:
                 if isinstance(row[ci], str): 
-                    words = re.split("[\s,\-\/\n]", row[ci])
+                    words = re.split("[\s\/\n]", row[ci])
                     row[ci] = " ".join(sorted(set(words), key=words.index))
                     try:
                         row[ci] = float(row[ci])

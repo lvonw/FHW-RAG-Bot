@@ -51,9 +51,11 @@ class PdfTextElement(PdfBaseElement):
 class PdfTableElement(PdfBaseElement):
     def __init__(self, table, page):
         PdfBaseElement.__init__(self,page)
-        self.table = table    
-        (self.jsonData, self.jsonHeader) = ConvertTable(table)
-
+        self.table = table  
+        (structData, structHeader) = ConvertTable(table)
+        self.structHeader = structHeader
+        self.structData = [{"data" : structData, "page": page}]
+ 
     def __str__(self):
         return f'Table:'
 
@@ -130,8 +132,8 @@ def parsePdf(path) -> List[PdfBaseElement]:
                         PdfData[-1].text += TextElements[i]['text']
                     elif len(PdfData) > 0 and isinstance(PdfData[-1], PdfTableElement) and "table" in TextElements[i]:
                         t = PdfTableElement(TextElements[i]['data'], page.page_number)
-                        if PdfData[-1].jsonHeader == t.jsonHeader:
-                            PdfData[-1].jsonData.extend(t.jsonData)
+                        if PdfData[-1].structHeader == t.structHeader:
+                            PdfData[-1].structData.extend(t.structData)
                         else:
                             PdfData.append(t)
                     else:
@@ -151,7 +153,7 @@ def parsePdf(path) -> List[PdfBaseElement]:
                 def line_is_not_header(line : TextElement):
                     text = line['text']
                     height = page.bbox[3] 
-                    if f"{str(page.page_number)} / {str(len(pdf.pages))}" in text or (f"Seite {str(page.page_number)}" in text):
+                    if f"{str(page.page_number)} / {str(len(pdf.pages))}" in text or (f"Seite {str(page.page_number)}" in text) or str(page.page_number) == text.strip():
                         diff_top =  line['bbox'][1]
                         if diff_top / height < 0.1 or diff_top / height > 0.9:
                             return False
@@ -181,24 +183,30 @@ class PDFElementCombiner(BaseDocumentTransformer, ABC):
     ) -> Sequence[Document]:
         result = []
         lastSection = None
+        newSection = True
         for doc in documents:
             
             if doc.metadata["type"] == "PdfSectionElement":
                 doc.metadata["section"] = doc.page_content.strip()
                 lastSection = doc
+                newSection = True
 
             if lastSection != None:
                 doc.metadata["section"]= lastSection.metadata["section"]
+                if newSection and doc.metadata["type"] != "PdfSectionElement":
+                        doc.page_content =  doc.metadata["section"] + "\n" + doc.page_content
 
             if len(result) > 0:
                 last : Document = result[-1]
-                if doc.metadata["type"] == "PdfTextElement" and last.metadata["type"] == "PdfSectionElement":
+                if doc.metadata["type"] == "PdfTextElement" and last.metadata["type"] == "PdfTextElement" and not newSection:
                     last.page_content = (last.page_content + "\n" + doc.page_content).strip()
-                else: 
+                    newSection = False
+                elif doc.metadata["type"] != "PdfSectionElement":
                     result.append(doc)
-                    
-            else:
+                    newSection = False
+            elif doc.metadata["type"] != "PdfSectionElement":
                 result.append(doc)
+                newSection = False
         return result
 
 
@@ -287,21 +295,26 @@ class PDFCustomParser(BaseBlobParser):
                     table_data : List[List[str | None]] = ele.table
                     if len(table_data[0]) > 5:
                         #2. to yaml
-                        for row in ele.jsonData:
-                            rowyaml = yaml.dump(row,allow_unicode=True)
-                            yield getDoc(rowyaml, blob, "PdfTableElementRow", ele.page)
+                        for structData in ele.structData:
+                            for row in structData["data"]:
+                                rowyaml = yaml.dump(row,allow_unicode=True)
+                                yield getDoc(rowyaml, blob, "PdfTableElementRow", structData["page"])
                     else:
                         data = []
                         yaml_table = ""
-                        for row in ele.jsonData:
-                            data.append(row)
-                            yaml_table = yaml.dump(data,allow_unicode=True)
-                            if len(yaml_table) > constants.MAX_DOCUMENT_CHUNK_SIZE:
-                                yield getDoc(yaml_table, blob, "PdfTable", ele.page)
-                                yaml_table = ""
-                                data = []
+                        first_page = ele.page
+                        for structData in ele.structData:
+                            for row in structData["data"]:
+                                if data == []:
+                                    first_page = structData["page"]
+                                data.append(row)
+                                yaml_table = yaml.dump(data,allow_unicode=True)
+                                if len(yaml_table) > constants.MAX_DOCUMENT_CHUNK_SIZE:
+                                    yield getDoc(yaml_table, blob, "PdfTable", first_page)
+                                    yaml_table = ""
+                                    data = []
                         if yaml_table:
-                            yield getDoc(yaml_table, blob, "PdfTable", ele.page)
+                            yield getDoc(yaml_table, blob, "PdfTable", first_page)
                     #    #1. convert to df
                     #    df = pd.DataFrame(table_data[1:], columns=table_data[0])
                     #    text = df.to_markdown()
@@ -313,11 +326,11 @@ class PDFCustomParser(BaseBlobParser):
                 
 
 if __name__ == "__main__":
-    path = "data/pdfs/PVO_2023_V5.pdf"
-    #path = "data/pdfs/ZLO_2021_V2.pdf"
+    #path = "data/pdfs/PVO_2023_V5.pdf"
+    path = "data/pdfs/ZLO_2021_V2.pdf"
     
     #path = "data/pdfs/Curriculum-B_Inf.pdf"
-    #path = "data/pdfs/CMaster_Informatik.pdf"
+    #path = "data/pdfs/Master_Informatik.pdf"
     # data = parsePdf(path)
     # for entry in data:
     #     print(entry)

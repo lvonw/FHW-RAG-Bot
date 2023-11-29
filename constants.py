@@ -45,8 +45,9 @@ def setLLM(model_name):
         model_name=model_name, temperature=TEMPERATURE, openai_api_key=API_KEY
     )
 
-MAX_DOCUMENT_CHUNK_SIZE = 200
-SPLITTER = CharacterTextSplitter(chunk_size=MAX_DOCUMENT_CHUNK_SIZE, chunk_overlap=0, separator="(\\n\\n|\\.\\n)", is_separator_regex=True)
+MAX_DOCUMENT_CHUNK_SIZE = 200 
+SPLITTER = CharacterTextSplitter(chunk_size=MAX_DOCUMENT_CHUNK_SIZE, chunk_overlap=0, separator="(\\n\\n|\\.\\n)", is_separator_regex=True) #TODO Change Back
+#SPLITTER = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
 
 INPUT_PROMPT = "Wie kann ich Dir helfen?: "
 
