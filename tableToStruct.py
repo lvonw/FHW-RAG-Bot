@@ -3,6 +3,7 @@
 
 
 from typing import List
+from cv2 import resizeWindow
 from langchain.agents.agent_types import AgentType
 from langchain.chat_models import ChatOpenAI
 import pandas as pd
@@ -54,6 +55,8 @@ def ConvertTable(rows: List[List[str | None]]):
         for ci in range(len(row)):
             if rowi > 0:
                 rowBefore = rows[rowi-1]
+                if not rowBefore[ci]:
+                    rowBefore[ci] = ""
                 if row[ci] and (rowBefore[ci] != rowBefore[ci + 1] if ci < len(row) - 1 else True) and (rowBefore[ci] != rowBefore[ci-1] if ci > 0 else True):
                     rowBefore[ci] += row[ci]
                     row[ci] = "" 
@@ -62,12 +65,13 @@ def ConvertTable(rows: List[List[str | None]]):
         for ci in range(len(row)):
             if row[ci] is not None:
                 #remove duplicates:
-                words = re.split("[\s,\-\/\n]", row[ci])
-                row[ci] = " ".join(sorted(set(words), key=words.index))
-                try:
-                    row[ci] = float(row[ci])
-                except ValueError:
-                  pass
+                if isinstance(row[ci], str): 
+                    words = re.split("[\s,\-\/\n]", row[ci])
+                    row[ci] = " ".join(sorted(set(words), key=words.index))
+                    try:
+                        row[ci] = float(row[ci])
+                    except ValueError:
+                        pass
 
    
     startIndex = 0
@@ -79,10 +83,17 @@ def ConvertTable(rows: List[List[str | None]]):
         for ci in range(len(row) - 1):
             if row[ci] != row[ci + 1]:
                 diff += 1
-        if diff <= 1:
+        if diff < 1:
             startIndex += 1
         else:
             break
+    
+    ### Create Header Info:
+    first_row = ["" for x in range(len(rows[0]))]
+    for ci in range(len(row)):
+        for i in range(startIndex, headerIndex):
+            if rows[i][ci]:
+                first_row[ci] += "/" + str(rows[i][ci])
     
     #### Create Json:
     data = []
@@ -105,4 +116,4 @@ def ConvertTable(rows: List[List[str | None]]):
                             ele = ele[lastIndex]
                 eleObj[lastIndex] = row[ci]
         data.append(obj)
-    return data
+    return (data, first_row)

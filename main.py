@@ -35,7 +35,7 @@ def get_user_input():
 
 validation = [
 "Wer unterrichtet Fach Moderne Software Architekturen?", 
-"Wie viele Leistungspunkte darf man noch offen haben um eine Bachelorthesis anzufangen?",
+"Wie viele ECTS darf man noch offen haben um eine Bachelorthesis anzufangen?",
 "Was kannst du übers Auslandssemster sagen?",
 "Wie lautet die Modul Nr. von Programmstrukturen 1?",
 "Wie lange dauert die Klausur in Programmstrukturen 1?",

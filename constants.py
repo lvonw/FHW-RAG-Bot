@@ -45,8 +45,8 @@ def setLLM(model_name):
         model_name=model_name, temperature=TEMPERATURE, openai_api_key=API_KEY
     )
 
-
-SPLITTER = CharacterTextSplitter(chunk_size=200, chunk_overlap=0, separator="(\\n\\n|\\.\\n)", is_separator_regex=True)
+MAX_DOCUMENT_CHUNK_SIZE = 200
+SPLITTER = CharacterTextSplitter(chunk_size=MAX_DOCUMENT_CHUNK_SIZE, chunk_overlap=0, separator="(\\n\\n|\\.\\n)", is_separator_regex=True)
 
 INPUT_PROMPT = "Wie kann ich Dir helfen?: "
 
@@ -59,7 +59,7 @@ um weitere Texte zu finden.
 SMART_AGENT_P = """
 Verwende die Search-Funktion, um Textabschnitte zu finde, die die Frage beantworten könnten. 
 Benutze die More funktion, um weitere Informationen zu finden.
-Dies ist dann der Fall, wenn die Informationen aus Search nicht reichen um die Frage zu beantworten.
+Suche auch nach Synonymen, wenn die gesuchte Antwort nicht gefunden wurde.
 Verwende zur beantwortung ausschließlich die, aus diesen Funktionen gewonnenen informationen. 
 Bevor du antwortest, hohle einmal tief luft, entspanne dich und denke Schritt für Schritt. 
 Gib bei deiner Antwort das Dokument und die Seite aus, auf welche du dich beziehst.
@@ -105,7 +105,7 @@ DEFAULT_MODEL = ModelMethod.SMART_AGENT
 
 DEFAULT_DOC_AMOUNT = 32
 USE_VERBOSE = True
-MAX_ITERATIONS = 6
+MAX_ITERATIONS = 4
 
 # ========== USAGE ==========
 USAGE_PROGRAM_NAME = "FHDocsBot"

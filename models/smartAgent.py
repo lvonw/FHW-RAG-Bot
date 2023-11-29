@@ -2,9 +2,7 @@ from io import TextIOWrapper
 import constants
 import os
 
-from base                               import (ModelBase, 
-                                                get_loader, 
-                                                get_retriever, write_validation_color, write_validation_retriever)
+from base                               import (ModelBase, get_loader, get_retriever, write_validation_color, write_validation_retriever)
 from langchain.agents.agent             import AgentExecutor
 from langchain.schema.vectorstore       import  VectorStoreRetriever
 from langchain.schema.runnable          import RunnableLambda
@@ -113,6 +111,10 @@ def get_formatted_metadata(doc : Document) -> str:
     if "page" in metadata:
         page = metadata["page"]
         res += f", auf der Seite {page},"
+
+    if "section" in metadata:
+        section = metadata["section"]
+        res += f", in der Sektion {section},"
 
     res += " die folgenden Informationen: \n"
     return res
