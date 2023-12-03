@@ -79,7 +79,8 @@ class Logger:
     def log(self, text, color, color_validation) -> 'Logger':
         self.output += text + "\n"
         print(color + text)
-        write_validation_color(self.validation_file, text, color_validation)
+        if hasattr(self, "validation_file"):
+            write_validation_color(self.validation_file, text, color_validation)
         return self
     def log_red(self, text)  -> 'Logger':
         return self.log(text, colors.fg.red, "red")
