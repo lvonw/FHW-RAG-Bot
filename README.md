@@ -2,8 +2,6 @@
 
  Studienordnung mit LLM
 
- Von Leopold von Wendt, Kim Henrik Otte und Finn Mertens
-
 ## Requirements
 
 To properly be able to run this project you need to meet these following
